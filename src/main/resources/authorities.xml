@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<attributes>
+    <attribute>
+        <authorityName>Authority A</authorityName>
+        <resources>
+            <resource>Resource A</resource>
+            <resource>Resource B</resource>
+        </resources>
+    </attribute>
+    <attribute>
+        <authorityName>Authority B</authorityName>
+        <resources>
+            <resource>Resource C</resource>
+            <resource>Resource D</resource>
+        </resources>
+    </attribute>
+</attributes>

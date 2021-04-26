@@ -1,0 +1,7 @@
+authentication:
+  enable-tokens: true
+
+token-storage:
+  use-default-redis-storage: true
+  host: localhost
+  port: 16379
