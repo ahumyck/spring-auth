@@ -1,7 +1,6 @@
 authentication:
   enable-tokens: true
-
-token-storage:
-  use-default-redis-storage: true
+redis-properties:
   host: localhost
   port: 16379
+  time-to-live: 300

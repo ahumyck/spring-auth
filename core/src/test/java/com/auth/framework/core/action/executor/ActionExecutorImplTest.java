@@ -3,16 +3,12 @@ package com.auth.framework.core.action.executor;
 import com.auth.framework.core.access.isAdmin.IsUserAdminValidatorWithInjectedAdminRoleName;
 import com.auth.framework.core.action.Action;
 import com.auth.framework.core.action.ActionStub;
-import com.auth.framework.core.exceptions.access.UserHasNoAccessException;
-import com.auth.framework.core.jwt.repository.RedisTokenStorage;
-import com.auth.framework.core.jwt.repository.TokenStorage;
-import com.auth.framework.core.jwt.repository.low.TokenRedisRepositoryImpl;
+import com.auth.framework.core.exceptions.UserHasNoAccessException;
 import com.auth.framework.core.users.UserPrincipal;
 import com.auth.framework.core.users.UserPrincipalStub;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collections;

@@ -1,10 +1,11 @@
 package com.diplom.impl.requestBody;
 
-
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString
 public class UsernamePasswordRequestBody {
-    private final String username;
-    private final String password;
+    private String username;
+    private String password;
 }

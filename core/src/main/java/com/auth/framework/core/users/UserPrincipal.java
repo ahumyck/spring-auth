@@ -7,7 +7,5 @@ import java.util.Collection;
 
 public interface UserPrincipal extends UserDetails {
 
-
     Collection<? extends AttributeGrantedAuthority> getAttributes();
-
 }

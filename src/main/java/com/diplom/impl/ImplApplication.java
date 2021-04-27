@@ -3,6 +3,7 @@ package com.diplom.impl;
 import com.diplom.impl.service.AttributeService;
 import com.diplom.impl.service.RoleService;
 import com.diplom.impl.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,6 +13,7 @@ import javax.annotation.PostConstruct;
 
 @SpringBootApplication
 @EnableJpaRepositories
+@Slf4j
 public class ImplApplication {
 
     @Autowired
@@ -43,7 +45,11 @@ public class ImplApplication {
         attributeService.createAttribute(PROJECT1_ATTRIBUTE_NAME);
         attributeService.createAttribute(PROJECT2_ATTRIBUTE_NAME);
 
-        userService.createUser("user", "user");
-        userService.createAdmin("admin", "admin");
+        try {
+            userService.createUnlockedUser("user@email.com", "user", "user");
+            userService.createUnlockedAdmin("admin@admin.com", "admin", "admin");
+        } catch (Exception e) {
+            log.error("Cannot create user lmfao ", e);
+        }
     }
 }

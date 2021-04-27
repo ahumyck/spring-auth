@@ -3,7 +3,7 @@ package com.diplom.impl.controller;
 
 import com.auth.framework.core.action.Action;
 import com.auth.framework.core.action.executor.ActionExecutor;
-import com.auth.framework.core.exceptions.access.UserHasNoAccessException;
+import com.auth.framework.core.exceptions.UserHasNoAccessException;
 import com.auth.framework.core.users.UserPrincipal;
 import com.diplom.impl.factory.ActionFactory;
 import com.diplom.impl.requestBody.UsernameRequestBody;

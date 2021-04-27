@@ -49,7 +49,7 @@ public class CustomUserPrincipal implements UserPrincipal {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !user.isLocked();
     }
 
     @Override

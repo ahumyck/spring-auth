@@ -1,12 +1,9 @@
 package com.auth.framework.core.encryption;
 
-import com.auth.framework.core.exceptions.encryption.EncryptionException;
-import lombok.SneakyThrows;
+import com.auth.framework.core.exceptions.EncryptionException;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;

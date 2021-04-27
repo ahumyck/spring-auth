@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @Slf4j
 public class CustomUserPrincipalService implements UserPrincipalService {
@@ -20,9 +18,9 @@ public class CustomUserPrincipalService implements UserPrincipalService {
 
     @Override
     public UserPrincipal loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> byUsername = userRepository.findByUsername(username);
-        if (byUsername.isPresent()) {
-            return new CustomUserPrincipal(byUsername.get());
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            return new CustomUserPrincipal(user);
         }
         log.error("{} was not found", username);
         throw new UsernameNotFoundException(username);
