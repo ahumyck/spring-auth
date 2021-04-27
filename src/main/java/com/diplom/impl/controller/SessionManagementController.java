@@ -2,7 +2,7 @@ package com.diplom.impl.controller;
 
 
 import com.auth.framework.core.exceptions.KillSessionException;
-import com.auth.framework.core.tokens.jwt.manager.SessionManager;
+import com.auth.framework.core.tokens.jwt.managers.session.SessionManager;
 import com.diplom.impl.requestBody.SessionsResponseBody;
 import com.diplom.impl.requestBody.UsernameRequestBody;
 import com.diplom.impl.requestBody.UsernameSessionBody;
@@ -31,7 +31,7 @@ public class SessionManagementController {
     public String killSession(HttpServletRequest request, @RequestBody UsernameSessionBody body) {
         try {
             log.info("Trying to kill session {}", body);
-            sessionManager.killSession(body.getUsername(), body.getSessionName(), request);
+            sessionManager.killSession(body.getUsername(), body.getSessionDetails(), request);
             return body + " was killed";
         } catch (KillSessionException e) {
             return "Can't kill myself: " + e.getMessage();

@@ -1,11 +1,11 @@
 package com.auth.framework.core.tokens.jwt.repository;
 
+import com.auth.framework.core.constants.AuthenticationConstants;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
+import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class InMemoryTokenRepository implements TokenRepository {
 
-    private final Map<String, Map<String, JsonWebToken>> storage = new ConcurrentHashMap<>();
+    private final Map<String, List<JsonWebToken>> storage = new ConcurrentHashMap<>();
 
     public InMemoryTokenRepository(Integer timeToLive, TimeUnit unit) {
 
@@ -23,7 +23,6 @@ public class InMemoryTokenRepository implements TokenRepository {
     public Collection<JsonWebToken> findAll() {
         log.info("Executing find all for json web tokens");
         return storage.values().stream()
-                .map(Map::values)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
@@ -31,29 +30,38 @@ public class InMemoryTokenRepository implements TokenRepository {
     @Override
     public void save(JsonWebToken jsonWebToken) {
         log.info("saving jwt {}", jsonWebToken);
-        Map<String, JsonWebToken> sessionTokenMap = storage.getOrDefault(jsonWebToken.getOwner(), new ConcurrentHashMap<>());
-        sessionTokenMap.put(jsonWebToken.getSessionName(), jsonWebToken);
-        storage.put(jsonWebToken.getOwner(), sessionTokenMap);
+        List<JsonWebToken> tokens = storage.getOrDefault(jsonWebToken.getOwner(), new ArrayList<>());
+        tokens.add(jsonWebToken);
+        storage.put(jsonWebToken.getOwner(), tokens);
 
     }
 
-    public JsonWebToken findByOwnerAndSessionName(String owner, String sessionName) {
+    @Override
+    public JsonWebToken findTokenByParameters(String owner, String sessionName, TokenParameters tokenParameters) {
         log.info("looking for user {} session {} token", owner, sessionName);
-        Map<String, JsonWebToken> sessionTokenMap = storage.get(owner);
-        if (sessionTokenMap != null) {
-            return sessionTokenMap.get(sessionName);
+
+        List<JsonWebToken> tokens = storage.get(owner);
+        if (tokens != null) {
+            TokenParameters copy = createCompleteCopy(sessionName, tokenParameters);
+            for (JsonWebToken token : tokens) {
+                if (copy.getParameters().equals(token.getParameters())) return token;
+            }
         } else {
             log.warn("user {} has no tokens", owner);
-            return null;
         }
+        log.warn("User has tokens, but i cant find token with params: owner = {}, session name = {}, params = {}",
+                owner,
+                sessionName,
+                tokenParameters);
+        return null;
     }
 
     @Override
     public Collection<JsonWebToken> findByOwner(String owner) {
         log.info("looking for user {} tokens", owner);
-        Map<String, JsonWebToken> sessionTokenMap = storage.get(owner);
-        if (sessionTokenMap != null) {
-            return Collections.unmodifiableCollection(sessionTokenMap.values());
+        List<JsonWebToken> tokens = storage.get(owner);
+        if (tokens != null) {
+            return Collections.unmodifiableList(tokens);
         } else {
             log.warn("user {} has no tokens", owner);
             return Collections.emptyList();
@@ -62,27 +70,61 @@ public class InMemoryTokenRepository implements TokenRepository {
 
     @Override
     public void deleteToken(JsonWebToken jsonWebToken) {
-        deleteByUsernameAndSession(jsonWebToken.getOwner(), jsonWebToken.getSessionName());
-    }
-
-    @Override
-    public void deleteByUsernameAndSession(String username, String sessionName) {
+        String username = jsonWebToken.getOwner();
+        String sessionName = jsonWebToken.getSessionName();
+        Map<String, Object> parameters = jsonWebToken.getParameters();
         log.info("Invalidation json web token by owner {}", username);
 
-        Map<String, JsonWebToken> sessionTokenMap = storage.get(username);
-        if (sessionTokenMap != null) {
-            sessionTokenMap.remove(sessionName);
-            storage.put(username, sessionTokenMap);
+        List<JsonWebToken> tokens = storage.get(username);
+        if (tokens != null) {
+            tokens.removeIf(token -> token.equals(jsonWebToken));
         } else {
             log.warn("TokenRepository doesn't contain token for username {} with session {}",
                     username,
                     sessionName);
+            return;
         }
+        log.warn("User has tokens, but i cant find token with params: owner = {}, session name = {}, params = {}",
+                username,
+                sessionName,
+                parameters);
+    }
+
+    @Override
+    public void deleteByUsernameAndSession(String username, String sessionName, TokenParameters parameters) {
+        log.info("Invalidation json web token by owner {}", username);
+
+        List<JsonWebToken> tokens = storage.get(username);
+        if (tokens != null) {
+            TokenParameters copy = createCompleteCopy(sessionName, parameters);
+            tokens.removeIf(token -> copy.getParameters().equals(token.getParameters()));
+        } else {
+            log.warn("TokenRepository doesn't contain token for username {} with session {}",
+                    username,
+                    sessionName);
+            return;
+        }
+        log.warn("User has tokens, but i cant find token with params: owner = {}, session name = {}, params = {}",
+                username,
+                sessionName,
+                parameters);
     }
 
     @Override
     public void deleteAllUserTokens(String owner) {
         log.info("Invalidation json web token by owner {}", owner);
         storage.remove(owner);
+    }
+
+    private TokenParameters createCompleteCopy(String sessionName, TokenParameters parameters) {
+        TokenParameters.Builder builder = TokenParameters
+                .getBuilder()
+                .addParameter(AuthenticationConstants.SESSION_PARAMETER, sessionName);
+        if (parameters != null) {
+            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                builder.addParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        return builder.build();
     }
 }

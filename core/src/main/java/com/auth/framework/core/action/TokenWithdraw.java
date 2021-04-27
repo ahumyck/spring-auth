@@ -2,6 +2,7 @@ package com.auth.framework.core.action;
 
 import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public class TokenWithdraw implements Action {
 
@@ -13,6 +14,12 @@ public class TokenWithdraw implements Action {
         this.tokenRepository = tokenRepository;
         this.username = withdrawFrom;
         this.adminAuthority = adminAuthority;
+    }
+
+    public TokenWithdraw(TokenRepository tokenRepository, String withdrawFrom, String adminRoleName) {
+        this.tokenRepository = tokenRepository;
+        this.username = withdrawFrom;
+        this.adminAuthority = new SimpleGrantedAuthority(adminRoleName);
     }
 
 

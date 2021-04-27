@@ -1,6 +1,6 @@
 package com.diplom.impl.controller;
 
-import com.auth.framework.core.tokens.jwt.manager.TokenManager;
+import com.auth.framework.core.tokens.jwt.managers.TokenManager;
 import com.diplom.impl.requestBody.RegistrationDataRequestBody;
 import com.diplom.impl.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class LoginController {
         String password = body.getPassword();
         try {
             userService.isExistingAndNotLocked(username, password);
-            manager.createTokenForUsername(request, response, username);
+            manager.createTokenForUsername(request, response, username, null);
         } catch (Exception e) {
             log.warn("Unable to login", e);
             return "Unable to login: " + e.getMessage();
@@ -41,7 +41,7 @@ public class LoginController {
                          @RequestParam String password) {
         try {
             userService.isExistingAndNotLocked(username, password);
-            manager.createTokenForUsername(request, response, username);
+            manager.createTokenForUsername(request, response, username, null);
         } catch (Exception e) {
             log.warn("Unable to login", e);
             return "Unable to login: " + e.getMessage();

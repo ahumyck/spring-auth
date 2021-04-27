@@ -5,7 +5,7 @@ import com.auth.framework.core.action.Action;
 import com.auth.framework.core.action.executor.ActionExecutor;
 import com.auth.framework.core.exceptions.UserHasNoAccessException;
 import com.auth.framework.core.users.UserPrincipal;
-import com.diplom.impl.factory.ActionFactory;
+import com.diplom.impl.factory.actions.ActionFactory;
 import com.diplom.impl.requestBody.UsernameRequestBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +48,6 @@ public class TokenWithdrawControllerExample {
             return e.getMessage();
         }
         return "Token was removed from user " + requestBody.getUsername();
-    }
-
-    @PostMapping(value = "/admin/withdraw")
-    public String tryWithdrawAdmin(@RequestBody UsernameRequestBody requestBody) {
-        return withdraw(requestBody);
     }
 
 

@@ -9,13 +9,15 @@ import org.jose4j.lang.JoseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 class IdentityProviderImplTest {
 
 
     @Test
     public void test() throws JoseException {
 
-        TokenFactory factory = (username, rawToken, duration, session) -> new JsonWebToken() {
+        TokenFactory factory = (username, rawToken, duration, session, parameters) -> new JsonWebToken() {
             private static final long serialVersionUID = 2114203656236622532L;
 
             @Override
@@ -37,6 +39,21 @@ class IdentityProviderImplTest {
             public String getSessionName() {
                 return session;
             }
+
+            @Override
+            public Object getParameter(String parameterName) {
+                return null;
+            }
+
+            @Override
+            public void addParameter(String parameterName, Object parameterValue) {
+
+            }
+
+            @Override
+            public Map<String, Object> getParameters() {
+                return null;
+            }
         };
 
         RsaJsonWebKey rsaJsonWebKey = RsaJwkGenerator.generateJwk(2048);
@@ -53,7 +70,7 @@ class IdentityProviderImplTest {
 
         String username = "username";
 
-        JsonWebToken jsonWebToken = identityProvider.generateTokenForUser(username, "");
+        JsonWebToken jsonWebToken = identityProvider.generateTokenForUser(username, "", null);
         String owner = identityProvider.resolveOwner(jsonWebToken.getRawToken());
         Assertions.assertEquals(username, owner);
     }

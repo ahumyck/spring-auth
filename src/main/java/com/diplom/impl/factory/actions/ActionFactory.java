@@ -1,4 +1,4 @@
-package com.diplom.impl.factory;
+package com.diplom.impl.factory.actions;
 
 import com.auth.framework.core.action.Action;
 import com.auth.framework.core.action.TokenWithdraw;

@@ -1,7 +1,9 @@
 package com.auth.framework.core.tokens.jwt.identity;
 
+import com.auth.framework.core.constants.AuthenticationConstants;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
+import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -20,7 +22,6 @@ public class IdentityProviderImpl implements IdentityProvider {
     private final Integer allowedClockSkewInSeconds;
     private final TokenFactory factory;
 
-    private final static String SESSION_PARAMETER = "sessionName";
 
     public IdentityProviderImpl(PublicJsonWebKey jsonWebKey,
                                 String allowedAlgorithm,
@@ -49,7 +50,7 @@ public class IdentityProviderImpl implements IdentityProvider {
     }
 
     @Override
-    public JsonWebToken generateTokenForUser(String username, String sessionName) {
+    public JsonWebToken generateTokenForUser(String username, String sessionName, TokenParameters parameters) {
         try {
             JwtClaims claims = new JwtClaims();
             claims.setExpirationTimeMinutesInTheFuture(durationTime);
@@ -57,8 +58,11 @@ public class IdentityProviderImpl implements IdentityProvider {
             claims.setIssuedAtToNow();  // when the token was issued/created (now)
             claims.setNotBeforeMinutesInThePast(activeBefore); // time before which the token is not yet valid (2 minutes ago)
             claims.setSubject(username); // the subject/principal is whom the token is about
-            claims.setStringClaim(SESSION_PARAMETER, sessionName);
-            return factory.createToken(username, signToken(claims), durationTime, sessionName);
+            claims.setStringClaim(AuthenticationConstants.SESSION_PARAMETER, sessionName);
+            if (parameters != null) {
+                parameters.forEach(claims::setClaim);
+            }
+            return factory.createToken(username, signToken(claims), durationTime, sessionName, parameters);
         } catch (JoseException e) {
             throw new RuntimeException(e);
         }

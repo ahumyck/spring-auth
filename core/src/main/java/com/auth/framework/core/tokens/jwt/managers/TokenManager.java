@@ -1,5 +1,9 @@
-package com.auth.framework.core.tokens.jwt.manager;
+package com.auth.framework.core.tokens.jwt.managers;
 
+
+import com.auth.framework.core.tokens.jwt.JsonWebToken;
+import com.auth.framework.core.tokens.jwt.filter.HeaderList;
+import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,15 +27,18 @@ public interface TokenManager {
      * </p>
      *
      * @param response ответ пользователю
-     * @param request запрос пользователя
+     * @param request  запрос пользователя
      * @param username для кого будет сгенерирован токен
      */
-    void createTokenForUsername(HttpServletRequest request, HttpServletResponse response, String username);
+    void createTokenForUsername(HttpServletRequest request,
+                                HttpServletResponse response,
+                                String username,
+                                TokenParameters parameters);
 
 
     /**
      * @param request запрос, в котором находится токен
      * @return имя пользователя, если токен был, или Optional.empty(), если токена не было
      */
-    Optional<String> validateTokenAndGetUsername(HttpServletRequest request);
+    Optional<JsonWebToken> validateAndGetToken(HttpServletRequest request, HeaderList headerList);
 }
