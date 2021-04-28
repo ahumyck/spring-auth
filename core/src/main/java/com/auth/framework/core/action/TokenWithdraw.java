@@ -4,7 +4,7 @@ import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-public class TokenWithdraw implements Action {
+public class TokenWithdraw implements Action<Object> {
 
     private final TokenRepository tokenRepository;
     private final String username;

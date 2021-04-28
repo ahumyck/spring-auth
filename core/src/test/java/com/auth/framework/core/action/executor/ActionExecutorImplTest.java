@@ -3,6 +3,7 @@ package com.auth.framework.core.action.executor;
 import com.auth.framework.core.access.isAdmin.IsUserAdminValidatorWithInjectedAdminRoleName;
 import com.auth.framework.core.action.Action;
 import com.auth.framework.core.action.ActionStub;
+import com.auth.framework.core.exceptions.ActionExecutionException;
 import com.auth.framework.core.exceptions.UserHasNoAccessException;
 import com.auth.framework.core.users.UserPrincipal;
 import com.auth.framework.core.users.UserPrincipalStub;
@@ -17,8 +18,8 @@ class ActionExecutorImplTest {
 
     private final String adminRoleName = "admin";
     private final String userRoleName = "user";
-    private Action simpleAction;
-    private Action actionForAdmins;
+    private Action<Object> simpleAction;
+    private Action<Object> actionForAdmins;
     private UserPrincipal simpleUser;
     private UserPrincipal admin;
     private final ActionExecutor actionExecutor = new ActionExecutorImpl(new IsUserAdminValidatorWithInjectedAdminRoleName(adminRoleName));
@@ -46,7 +47,7 @@ class ActionExecutorImplTest {
         try {
             actionExecutor.executeAs(simpleUser, simpleAction);
             Assertions.assertTrue(true);
-        } catch (UserHasNoAccessException e) {
+        } catch (UserHasNoAccessException | ActionExecutionException e) {
             Assertions.fail(e.getMessage());
         }
     }
@@ -58,6 +59,8 @@ class ActionExecutorImplTest {
             Assertions.fail("UserHasNoAccessException expected");
         } catch (UserHasNoAccessException e) {
             Assertions.assertTrue(true);
+        } catch (ActionExecutionException e) {
+            Assertions.fail(e.getMessage());
         }
     }
 
@@ -66,7 +69,7 @@ class ActionExecutorImplTest {
         try {
             actionExecutor.executeAs(admin, simpleAction);
             Assertions.assertTrue(true);
-        } catch (UserHasNoAccessException e) {
+        } catch (UserHasNoAccessException | ActionExecutionException e) {
             Assertions.fail(e.getMessage());
         }
     }
@@ -76,7 +79,7 @@ class ActionExecutorImplTest {
         try {
             actionExecutor.executeAs(admin, actionForAdmins);
             Assertions.assertTrue(true);
-        } catch (UserHasNoAccessException e) {
+        } catch (UserHasNoAccessException | ActionExecutionException e) {
             Assertions.fail(e.getMessage());
         }
     }

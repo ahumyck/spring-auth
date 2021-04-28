@@ -2,7 +2,6 @@ package com.auth.framework.core.tokens.jwt.managers;
 
 
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
-import com.auth.framework.core.tokens.jwt.filter.HeaderList;
 import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,5 +39,5 @@ public interface TokenManager {
      * @param request запрос, в котором находится токен
      * @return имя пользователя, если токен был, или Optional.empty(), если токена не было
      */
-    Optional<JsonWebToken> validateAndGetToken(HttpServletRequest request, HeaderList headerList);
+    Optional<JsonWebToken> validateAndGetToken(HttpServletRequest request);
 }

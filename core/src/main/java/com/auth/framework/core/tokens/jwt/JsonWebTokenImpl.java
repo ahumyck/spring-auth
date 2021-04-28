@@ -1,11 +1,8 @@
 package com.auth.framework.core.tokens.jwt;
 
-import com.auth.framework.core.constants.AuthenticationConstants;
+import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class JsonWebTokenImpl implements JsonWebToken {
     private static final long serialVersionUID = -946953360423005898L;
@@ -13,13 +10,19 @@ public class JsonWebTokenImpl implements JsonWebToken {
     private final String owner;
     private final String rawToken;
     private final Integer timeToLive;
-    private final Map<String, Object> objectMap = new ConcurrentHashMap<>();
+    private final String sessionName;
+    private final TokenParameters tokenParameters;
 
-    public JsonWebTokenImpl(String owner, String rawToken, Integer timeToLive, String sessionName) {
+    public JsonWebTokenImpl(String owner, String rawToken, Integer timeToLive, String sessionName, TokenParameters tokenParameters) {
         this.owner = owner;
         this.rawToken = rawToken;
         this.timeToLive = timeToLive;
-        this.objectMap.put(AuthenticationConstants.SESSION_PARAMETER, sessionName);
+        this.sessionName = sessionName;
+        if (tokenParameters != null) {
+            this.tokenParameters = tokenParameters;
+        } else {
+            this.tokenParameters = new TokenParameters();
+        }
     }
 
     @Override
@@ -39,22 +42,22 @@ public class JsonWebTokenImpl implements JsonWebToken {
 
     @Override
     public String getSessionName() {
-        return (String) objectMap.get(AuthenticationConstants.SESSION_PARAMETER);
+        return sessionName;
     }
 
     @Override
     public Object getParameter(String parameterName) {
-        return objectMap.get(parameterName);
+        return tokenParameters.get(parameterName);
     }
 
     @Override
     public void addParameter(String parameterName, Object parameterValue) {
-        objectMap.put(parameterName, parameterValue);
+        tokenParameters.put(parameterName, parameterValue);
     }
 
     @Override
-    public Map<String, Object> getParameters() {
-        return Collections.unmodifiableMap(objectMap);
+    public TokenParameters getTokenParameters() {
+        return tokenParameters;
     }
 
     @Override
@@ -65,12 +68,9 @@ public class JsonWebTokenImpl implements JsonWebToken {
         return Objects.equals(owner, that.owner)
                 && Objects.equals(rawToken, that.rawToken)
                 && Objects.equals(timeToLive, that.timeToLive)
-                && Objects.equals(objectMap, that.objectMap);
-    }
+                && Objects.equals(sessionName, that.sessionName)
+                && TokenParameters.equals(tokenParameters, that.tokenParameters);
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(owner, rawToken, timeToLive, objectMap);
     }
 
     @Override
@@ -79,7 +79,13 @@ public class JsonWebTokenImpl implements JsonWebToken {
                 "owner='" + owner + '\'' +
                 ", rawToken='" + rawToken + '\'' +
                 ", timeToLive=" + timeToLive +
-                ", objectMap=" + objectMap +
+                ", sessionName='" + sessionName + '\'' +
+                ", tokenParameters=" + tokenParameters +
                 '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(owner, rawToken, timeToLive, sessionName, tokenParameters);
     }
 }

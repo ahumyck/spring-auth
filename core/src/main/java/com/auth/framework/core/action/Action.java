@@ -1,5 +1,6 @@
 package com.auth.framework.core.action;
 
+import com.auth.framework.core.exceptions.ActionExecutionException;
 import org.springframework.security.core.GrantedAuthority;
 
 
@@ -8,12 +9,12 @@ import org.springframework.security.core.GrantedAuthority;
  *
  * @see com.auth.framework.core.action.executor.ActionExecutor ActionExecutor
  */
-public interface Action {
+public interface Action<T> {
 
     /**
      * Действия, которые буду выполняться от лица пользователя
      */
-    Object execute();
+    T execute() throws ActionExecutionException;
 
 
     /**

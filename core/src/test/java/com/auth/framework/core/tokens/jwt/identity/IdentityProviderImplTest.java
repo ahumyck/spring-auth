@@ -2,14 +2,13 @@ package com.auth.framework.core.tokens.jwt.identity;
 
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
+import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.lang.JoseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
 
 class IdentityProviderImplTest {
 
@@ -51,8 +50,8 @@ class IdentityProviderImplTest {
             }
 
             @Override
-            public Map<String, Object> getParameters() {
-                return null;
+            public TokenParameters getTokenParameters() {
+                return parameters;
             }
         };
 

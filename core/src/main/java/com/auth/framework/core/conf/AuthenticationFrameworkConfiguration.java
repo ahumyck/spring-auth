@@ -218,7 +218,7 @@ public class AuthenticationFrameworkConfiguration {
     @Bean
     @ConditionalOnProperty("authentication.enable-tokens")
     @ConditionalOnMissingBean(SessionManager.class)
-    public SessionManager sessionManager(TokenRepository repository) {
-        return new SessionManagerImpl(repository);
+    public SessionManager sessionManager(TokenRepository repository, TokenManager manager) {
+        return new SessionManagerImpl(repository, manager);
     }
 }

@@ -2,7 +2,7 @@ package com.auth.framework.core.action;
 
 import org.springframework.security.core.GrantedAuthority;
 
-public class ActionStub implements Action {
+public class ActionStub implements Action<Object> {
 
     private final GrantedAuthority authority;
     private final String description;

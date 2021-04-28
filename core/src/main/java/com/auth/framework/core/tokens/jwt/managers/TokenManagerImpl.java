@@ -3,7 +3,6 @@ package com.auth.framework.core.tokens.jwt.managers;
 import com.auth.framework.core.constants.AuthenticationConstants;
 import com.auth.framework.core.encryption.EncryptionService;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
-import com.auth.framework.core.tokens.jwt.filter.HeaderList;
 import com.auth.framework.core.tokens.jwt.identity.IdentityProvider;
 import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
@@ -50,12 +49,15 @@ public class TokenManagerImpl implements TokenManager {
     }
 
     @Override
-    public Optional<JsonWebToken> validateAndGetToken(HttpServletRequest request, HeaderList headerList) {
-        return transport
-                .extractRawToken(request)
-                .map(this::tryDecrypt)
-                .map(this::tryResolve)
-                .map(token -> this.tryFindByOwner(token, request, headerList));
+    public Optional<JsonWebToken> validateAndGetToken(HttpServletRequest request) {
+        Optional<String> possibleJWT = transport.extractRawToken(request);
+        if (possibleJWT.isPresent()) {
+            String rawToken = possibleJWT.get();
+            String decrypted = tryDecrypt(rawToken);
+            String owner = tryResolve(decrypted);
+            return Optional.of(tryFindByOwner(owner, rawToken));
+        }
+        return Optional.empty();
     }
 
 
@@ -79,20 +81,13 @@ public class TokenManagerImpl implements TokenManager {
         return null;
     }
 
-    private JsonWebToken tryFindByOwner(String input, HttpServletRequest request, HeaderList headerList) {
-        if (input == null) return null;
+    private JsonWebToken tryFindByOwner(String username, String rawToken) {
+        if (username == null) return null;
         try {
-            String sessionName = request.getHeader(AuthenticationConstants.USER_AGENT_HEADER_NAME);
-            TokenParameters.Builder builder = TokenParameters.getBuilder();
-            for (String header : headerList.getHeaders()) {
-                String headerValue = request.getHeader(header);
-                if (headerValue != null) {
-                    builder.addParameter(header, headerValue);
-                }
-            }
-            return tokenRepository.findTokenByParameters(input, sessionName, builder.build());
+            return tokenRepository.findByUsernameAndRawToken(username, rawToken);
         } catch (Exception e) {
-            log.error("Unable to find owner for token {} in DB", input, e);
+            log.error("Unable to find token with params: username - {}, rawToken - {}",
+                    username, rawToken, e);
         }
         return null;
     }

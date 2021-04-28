@@ -1,6 +1,5 @@
 package com.auth.framework.core.tokens.jwt.repository;
 
-import com.auth.framework.core.constants.AuthenticationConstants;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 import lombok.extern.slf4j.Slf4j;
@@ -42,28 +41,32 @@ public class InMemoryTokenRepository implements TokenRepository {
 
         List<JsonWebToken> tokens = storage.get(owner);
         if (tokens != null) {
-            TokenParameters copy = createCompleteCopy(sessionName, tokenParameters);
-            for (JsonWebToken token : tokens) {
-                if (copy.getParameters().equals(token.getParameters())) return token;
+            JsonWebToken jsonWebToken = tokens
+                    .stream()
+                    .filter(token -> token.getSessionName().equals(sessionName)
+                            && TokenParameters.equals(token.getTokenParameters(), tokenParameters))
+                    .findAny()
+                    .orElse(null);
+            if (jsonWebToken == null) {
+                log.warn("User has tokens, but i cant find token with params: owner = {}, session name = {}, params = {}",
+                        owner,
+                        sessionName,
+                        tokenParameters);
             }
-        } else {
-            log.warn("user {} has no tokens", owner);
+            return jsonWebToken;
         }
-        log.warn("User has tokens, but i cant find token with params: owner = {}, session name = {}, params = {}",
-                owner,
-                sessionName,
-                tokenParameters);
+        log.info("username {} has no tokens", owner);
         return null;
     }
 
     @Override
     public Collection<JsonWebToken> findByOwner(String owner) {
-        log.info("looking for user {} tokens", owner);
+        log.info("looking for username {} tokens", owner);
         List<JsonWebToken> tokens = storage.get(owner);
         if (tokens != null) {
             return Collections.unmodifiableList(tokens);
         } else {
-            log.warn("user {} has no tokens", owner);
+            log.info("username {} has no tokens", owner);
             return Collections.emptyList();
         }
     }
@@ -72,7 +75,6 @@ public class InMemoryTokenRepository implements TokenRepository {
     public void deleteToken(JsonWebToken jsonWebToken) {
         String username = jsonWebToken.getOwner();
         String sessionName = jsonWebToken.getSessionName();
-        Map<String, Object> parameters = jsonWebToken.getParameters();
         log.info("Invalidation json web token by owner {}", username);
 
         List<JsonWebToken> tokens = storage.get(username);
@@ -87,7 +89,22 @@ public class InMemoryTokenRepository implements TokenRepository {
         log.warn("User has tokens, but i cant find token with params: owner = {}, session name = {}, params = {}",
                 username,
                 sessionName,
-                parameters);
+                jsonWebToken.getTokenParameters());
+    }
+
+    @Override
+    public JsonWebToken findByUsernameAndRawToken(String username, String rawToken) {
+        log.info("Looking token for username {} and rawToken {}", username, rawToken);
+        List<JsonWebToken> tokens = storage.get(username);
+        if (tokens != null) {
+            return tokens
+                    .stream()
+                    .filter(token -> token.getRawToken().equals(rawToken))
+                    .findAny()
+                    .orElse(null);
+        }
+        log.warn("DB doesnt have token with username {} and rawToken {}", username, rawToken);
+        return null;
     }
 
     @Override
@@ -96,8 +113,8 @@ public class InMemoryTokenRepository implements TokenRepository {
 
         List<JsonWebToken> tokens = storage.get(username);
         if (tokens != null) {
-            TokenParameters copy = createCompleteCopy(sessionName, parameters);
-            tokens.removeIf(token -> copy.getParameters().equals(token.getParameters()));
+            tokens.removeIf(token -> token.getSessionName().equals(sessionName)
+                    && TokenParameters.equals(token.getTokenParameters(), parameters));
         } else {
             log.warn("TokenRepository doesn't contain token for username {} with session {}",
                     username,
@@ -114,17 +131,5 @@ public class InMemoryTokenRepository implements TokenRepository {
     public void deleteAllUserTokens(String owner) {
         log.info("Invalidation json web token by owner {}", owner);
         storage.remove(owner);
-    }
-
-    private TokenParameters createCompleteCopy(String sessionName, TokenParameters parameters) {
-        TokenParameters.Builder builder = TokenParameters
-                .getBuilder()
-                .addParameter(AuthenticationConstants.SESSION_PARAMETER, sessionName);
-        if (parameters != null) {
-            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-                builder.addParameter(entry.getKey(), entry.getValue());
-            }
-        }
-        return builder.build();
     }
 }

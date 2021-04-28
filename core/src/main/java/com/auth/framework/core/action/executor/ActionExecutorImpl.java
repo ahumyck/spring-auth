@@ -2,6 +2,7 @@ package com.auth.framework.core.action.executor;
 
 import com.auth.framework.core.access.isAdmin.IsUserAdminValidator;
 import com.auth.framework.core.action.Action;
+import com.auth.framework.core.exceptions.ActionExecutionException;
 import com.auth.framework.core.exceptions.UserHasNoAccessException;
 import com.auth.framework.core.role.AttributeGrantedAuthority;
 import com.auth.framework.core.users.UserPrincipal;
@@ -21,7 +22,7 @@ public class ActionExecutorImpl implements ActionExecutor {
     }
 
     @Override
-    public Object executeAs(UserPrincipal principal, Action action) throws UserHasNoAccessException {
+    public <T> T executeAs(UserPrincipal principal, Action<T> action) throws UserHasNoAccessException, ActionExecutionException {
         Objects.requireNonNull(principal);
         Objects.requireNonNull(action);
         if (haveAccessForAction(principal, action)) {
@@ -49,7 +50,7 @@ public class ActionExecutorImpl implements ActionExecutor {
         return allAuthorities;
     }
 
-    private boolean haveAccessForAction(UserPrincipal principal, Action action) {
+    private <T> boolean haveAccessForAction(UserPrincipal principal, Action<T> action) {
         if (!validator.isAdmin(principal)) {
             String authority = action.getAuthority().getAuthority();
             return getAllUserAuthorities(principal)

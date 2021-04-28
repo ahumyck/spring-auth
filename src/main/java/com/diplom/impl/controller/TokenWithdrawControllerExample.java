@@ -3,6 +3,7 @@ package com.diplom.impl.controller;
 
 import com.auth.framework.core.action.Action;
 import com.auth.framework.core.action.executor.ActionExecutor;
+import com.auth.framework.core.exceptions.ActionExecutionException;
 import com.auth.framework.core.exceptions.UserHasNoAccessException;
 import com.auth.framework.core.users.UserPrincipal;
 import com.diplom.impl.factory.actions.ActionFactory;
@@ -42,9 +43,9 @@ public class TokenWithdrawControllerExample {
                 principal.getAttributes());
 
         try {
-            Action withdrawAction = actionFactory.getWithdrawAction(requestBody.getUsername());
+            Action<Object> withdrawAction = actionFactory.getWithdrawAction(requestBody.getUsername());
             actionExecutor.executeAs(principal, withdrawAction);
-        } catch (UserHasNoAccessException e) {
+        } catch (UserHasNoAccessException | ActionExecutionException e) {
             return e.getMessage();
         }
         return "Token was removed from user " + requestBody.getUsername();

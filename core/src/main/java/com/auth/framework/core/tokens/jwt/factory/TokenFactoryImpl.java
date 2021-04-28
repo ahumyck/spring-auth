@@ -22,10 +22,10 @@ public class TokenFactoryImpl implements TokenFactory {
                                     Integer duration,
                                     String sessionName,
                                     TokenParameters parameters) {
-        JsonWebTokenImpl jsonWebToken = new JsonWebTokenImpl(username, encryptionService.encrypt(rawToken), duration, sessionName);
-        if (parameters != null) {
-            parameters.forEach(jsonWebToken::addParameter);
-        }
-        return jsonWebToken;
+        return new JsonWebTokenImpl(username,
+                encryptionService.encrypt(rawToken),
+                duration,
+                sessionName,
+                parameters);
     }
 }

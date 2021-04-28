@@ -31,16 +31,21 @@ public interface TokenRepository {
      */
     void save(JsonWebToken jsonWebToken);
 
+
     /**
-     * @param owner      имя пользователя, для которого необходимо найти токен в бд
-     * @param parameters
-     * @return токен пользователя
-     * <p>
-     * В случае заглушки необходимо вернуть NULL.
+     *
+     * @param owner имя юзера
+     * @param sessionName название сессии
+     * @param parameters параметры сессии
+     * @return токен юзера с заданными параметрами сессии
      */
     JsonWebToken findTokenByParameters(String owner, String sessionName, TokenParameters parameters);
 
 
+    /**
+     * @param owner имя юзера
+     * @return все токены юзеры со всех сессий
+     */
     Collection<JsonWebToken> findByOwner(String owner);
 
     /**
@@ -48,6 +53,9 @@ public interface TokenRepository {
      *                     <p>В случае заглушки данный метод необходимо оставить пустым</p>
      */
     void deleteToken(JsonWebToken jsonWebToken);
+
+
+    JsonWebToken findByUsernameAndRawToken(String owner, String rawToken);
 
 
     void deleteByUsernameAndSession(String username, String sessionName, TokenParameters parameters);

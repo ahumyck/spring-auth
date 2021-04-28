@@ -15,7 +15,7 @@ public class ActionFactory {
     @Autowired
     private TokenRepository tokenRepository;
 
-    public Action getWithdrawAction(String withdrawFrom) {
+    public Action<Object> getWithdrawAction(String withdrawFrom) {
         return new TokenWithdraw(tokenRepository, withdrawFrom, new SimpleGrantedAuthority(ADMIN_ROLE_NAME));
     }
 }

@@ -2,40 +2,63 @@ package com.diplom.impl.controller;
 
 
 import com.auth.framework.core.exceptions.KillSessionException;
+import com.auth.framework.core.tokens.jwt.managers.session.Session;
 import com.auth.framework.core.tokens.jwt.managers.session.SessionManager;
+import com.auth.framework.core.users.UserPrincipal;
 import com.diplom.impl.requestBody.SessionsResponseBody;
-import com.diplom.impl.requestBody.UsernameRequestBody;
-import com.diplom.impl.requestBody.UsernameSessionBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
-@RestController
+
 @Slf4j
+@RestController
+@RequestMapping(value = "/sessions")
 public class SessionManagementController {
 
     @Autowired
     private SessionManager sessionManager;
 
 
-    @PostMapping(value = "/sessions")
-    public SessionsResponseBody getSessions(@RequestBody UsernameRequestBody body) {
-        return new SessionsResponseBody(sessionManager.getAllSessionsForUsername(body.getUsername()));
+    @PostMapping(value = "/current")
+    public List<Session> getSessions() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        try {
+            UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+            return sessionManager.getAllSessionsForUsername(principal.getUsername());
+        } catch (ClassCastException e) {
+            log.warn("Can't get active session for unlogged user {}", authentication.getPrincipal(), e);
+            return Collections.emptyList();
+        }
     }
 
-    @PostMapping(value = "/killSession")
-    public String killSession(HttpServletRequest request, @RequestBody UsernameSessionBody body) {
+    @PostMapping(value = "/kill")
+    public SessionsResponseBody killSession(HttpServletRequest request,
+                                            HttpServletResponse response,
+                                            @RequestBody Session session) throws IOException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         try {
-            log.info("Trying to kill session {}", body);
-            sessionManager.killSession(body.getUsername(), body.getSessionDetails(), request);
-            return body + " was killed";
+            UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+            sessionManager.killSession(principal, session, request);
+            return new SessionsResponseBody(sessionManager.getAllSessionsForUsername(principal.getUsername()));
         } catch (KillSessionException e) {
-            return "Can't kill myself: " + e.getMessage();
+            response.sendError(400, e.getMessage());
+        } catch (ClassCastException e) {
+            log.warn("Can't get active session for unlogged user {}", authentication.getPrincipal(), e);
+            response.sendError(400, e.getMessage());
         }
+        return null;
     }
 
 
