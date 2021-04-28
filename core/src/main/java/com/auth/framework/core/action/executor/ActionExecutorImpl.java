@@ -1,6 +1,6 @@
 package com.auth.framework.core.action.executor;
 
-import com.auth.framework.core.access.isAdmin.IsUserAdminValidator;
+import com.auth.framework.core.access.admin.AdminUserValidator;
 import com.auth.framework.core.action.Action;
 import com.auth.framework.core.exceptions.ActionExecutionException;
 import com.auth.framework.core.exceptions.UserHasNoAccessException;
@@ -15,9 +15,9 @@ import java.util.Objects;
 
 public class ActionExecutorImpl implements ActionExecutor {
 
-    private final IsUserAdminValidator validator;
+    private final AdminUserValidator validator;
 
-    public ActionExecutorImpl(IsUserAdminValidator validator) {
+    public ActionExecutorImpl(AdminUserValidator validator) {
         this.validator = validator;
     }
 

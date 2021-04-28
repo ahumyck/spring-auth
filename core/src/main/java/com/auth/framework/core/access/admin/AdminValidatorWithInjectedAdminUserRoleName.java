@@ -1,13 +1,13 @@
-package com.auth.framework.core.access.isAdmin;
+package com.auth.framework.core.access.admin;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class IsUserAdminValidatorWithInjectedAdminRoleName implements IsUserAdminValidator {
+public class AdminValidatorWithInjectedAdminUserRoleName implements AdminUserValidator {
 
     private final String adminRoleName;
 
-    public IsUserAdminValidatorWithInjectedAdminRoleName(String adminRoleName) {
+    public AdminValidatorWithInjectedAdminUserRoleName(String adminRoleName) {
         this.adminRoleName = adminRoleName;
     }
 

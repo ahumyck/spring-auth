@@ -5,6 +5,7 @@ import com.diplom.impl.requestBody.RegistrationDataRequestBody;
 import com.diplom.impl.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;

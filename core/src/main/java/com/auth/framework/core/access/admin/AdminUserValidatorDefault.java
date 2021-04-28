@@ -1,4 +1,4 @@
-package com.auth.framework.core.access.isAdmin;
+package com.auth.framework.core.access.admin;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -6,11 +6,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Arrays;
 import java.util.List;
 
-public class IsUserAdminValidatorDefault implements IsUserAdminValidator {
+public class AdminUserValidatorDefault implements AdminUserValidator {
 
     private final List<String> adminNames;
 
-    public IsUserAdminValidatorDefault() {
+    public AdminUserValidatorDefault() {
         this.adminNames = Arrays.asList("administrator", "admin");
     }
 

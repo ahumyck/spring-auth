@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.auth.framework.core.conf.AuthenticationFrameworkConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.auth.framework.core.configuration.spring.factories.AuthenticationFrameworkConfiguration

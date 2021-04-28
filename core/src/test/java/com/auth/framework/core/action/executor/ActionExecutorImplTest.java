@@ -1,6 +1,6 @@
 package com.auth.framework.core.action.executor;
 
-import com.auth.framework.core.access.isAdmin.IsUserAdminValidatorWithInjectedAdminRoleName;
+import com.auth.framework.core.access.admin.AdminValidatorWithInjectedAdminUserRoleName;
 import com.auth.framework.core.action.Action;
 import com.auth.framework.core.action.ActionStub;
 import com.auth.framework.core.exceptions.ActionExecutionException;
@@ -22,7 +22,7 @@ class ActionExecutorImplTest {
     private Action<Object> actionForAdmins;
     private UserPrincipal simpleUser;
     private UserPrincipal admin;
-    private final ActionExecutor actionExecutor = new ActionExecutorImpl(new IsUserAdminValidatorWithInjectedAdminRoleName(adminRoleName));
+    private final ActionExecutor actionExecutor = new ActionExecutorImpl(new AdminValidatorWithInjectedAdminUserRoleName(adminRoleName));
 
 
     @BeforeEach

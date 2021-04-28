@@ -55,7 +55,9 @@ public class TokenManagerImpl implements TokenManager {
             String rawToken = possibleJWT.get();
             String decrypted = tryDecrypt(rawToken);
             String owner = tryResolve(decrypted);
-            return Optional.of(tryFindByOwner(owner, rawToken));
+            JsonWebToken jsonWebToken = tryFindByOwner(owner, rawToken);
+            if (jsonWebToken != null)
+                return Optional.of(jsonWebToken);
         }
         return Optional.empty();
     }

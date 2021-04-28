@@ -1,13 +1,12 @@
-package com.auth.framework.core.conf;
+package com.auth.framework.core.configuration.spring.factories;
 
 
-import com.auth.framework.core.access.AccessControlManager;
-import com.auth.framework.core.access.XMLAccessControlManager;
-import com.auth.framework.core.access.isAdmin.IsUserAdminValidator;
-import com.auth.framework.core.access.isAdmin.IsUserAdminValidatorDefault;
-import com.auth.framework.core.access.isAdmin.IsUserAdminValidatorWithInjectedAdminRoleName;
+import com.auth.framework.core.access.admin.AdminUserValidator;
+import com.auth.framework.core.access.admin.AdminUserValidatorDefault;
+import com.auth.framework.core.access.admin.AdminValidatorWithInjectedAdminUserRoleName;
 import com.auth.framework.core.action.executor.ActionExecutor;
 import com.auth.framework.core.action.executor.ActionExecutorImpl;
+import com.auth.framework.core.attribute.AttributeConfigurer;
 import com.auth.framework.core.encryption.AESEncryptionService;
 import com.auth.framework.core.encryption.EncryptionService;
 import com.auth.framework.core.encryption.generator.RandomPasswordGenerator;
@@ -17,10 +16,10 @@ import com.auth.framework.core.tokens.jwt.factory.TokenFactoryImpl;
 import com.auth.framework.core.tokens.jwt.filter.TokenFilter;
 import com.auth.framework.core.tokens.jwt.identity.IdentityProvider;
 import com.auth.framework.core.tokens.jwt.identity.IdentityProviderImpl;
-import com.auth.framework.core.tokens.jwt.managers.session.SessionManager;
-import com.auth.framework.core.tokens.jwt.managers.session.SessionManagerImpl;
 import com.auth.framework.core.tokens.jwt.managers.TokenManager;
 import com.auth.framework.core.tokens.jwt.managers.TokenManagerImpl;
+import com.auth.framework.core.tokens.jwt.managers.session.SessionManager;
+import com.auth.framework.core.tokens.jwt.managers.session.SessionManagerImpl;
 import com.auth.framework.core.tokens.jwt.repository.InMemoryTokenRepository;
 import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
 import com.auth.framework.core.tokens.jwt.transport.CookieTransport;
@@ -136,31 +135,20 @@ public class AuthenticationFrameworkConfiguration {
     }
 
 
-    //xml attribute model configuration
     @Bean
-    @ConditionalOnMissingBean(AccessControlManager.class)
-    @ConditionalOnProperty("authentication.attribute-model-filename")
-    public AccessControlManager accessControlManager(AuthenticationFrameworkProperties properties,
-                                                     IsUserAdminValidator validator) {
-        return new XMLAccessControlManager(properties.getEnableAttributeModel(), validator);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(IsUserAdminValidator.class)
-//    @ConditionalOnProperty("authentication.attribute-model-filename")
-    public IsUserAdminValidator validator(AuthenticationFrameworkProperties properties) {
+    @ConditionalOnMissingBean(AdminUserValidator.class)
+    public AdminUserValidator validator(AuthenticationFrameworkProperties properties) {
         String adminRoleName = properties.getAdminRoleName();
         if (adminRoleName == null || "".equals(adminRoleName)) {
-            return new IsUserAdminValidatorDefault();
+            return new AdminUserValidatorDefault();
         }
-        return new IsUserAdminValidatorWithInjectedAdminRoleName(adminRoleName);
+        return new AdminValidatorWithInjectedAdminUserRoleName(adminRoleName);
     }
 
     //action executor
     @Bean
     @ConditionalOnMissingBean(ActionExecutor.class)
-    @ConditionalOnBean(IsUserAdminValidator.class)
-    public ActionExecutor actionExecutor(IsUserAdminValidator validator) {
+    public ActionExecutor actionExecutor(AdminUserValidator validator) {
         return new ActionExecutorImpl(validator);
     }
 
@@ -220,5 +208,12 @@ public class AuthenticationFrameworkConfiguration {
     @ConditionalOnMissingBean(SessionManager.class)
     public SessionManager sessionManager(TokenRepository repository, TokenManager manager) {
         return new SessionManagerImpl(repository, manager);
+    }
+
+    //attributes
+    @Bean
+    @ConditionalOnMissingBean(AttributeConfigurer.class)
+    public AttributeConfigurer attributeConfigurer() {
+        return new AttributeConfigurer();
     }
 }
