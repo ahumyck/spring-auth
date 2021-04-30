@@ -1,6 +1,5 @@
 package com.auth.framework.core.tokens.jwt.identity;
 
-import com.auth.framework.core.constants.AuthenticationConstants;
 import com.auth.framework.core.exceptions.WrongTypeSigningKeyException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
@@ -42,7 +41,7 @@ public abstract class BaseIdentityProvider implements IdentityProvider {
     }
 
     @Override
-    public JsonWebToken generateTokenForUser(String username, String sessionName, TokenParameters parameters) {
+    public JsonWebToken generateTokenForUser(String username, TokenParameters parameters) {
 
         JwtClaims claims = new JwtClaims();
         claims.setExpirationTimeMinutesInTheFuture(durationTime);
@@ -50,12 +49,11 @@ public abstract class BaseIdentityProvider implements IdentityProvider {
         claims.setIssuedAtToNow();  // when the token was issued/created (now)
         claims.setNotBeforeMinutesInThePast(activeBefore); // time before which the token is not yet valid (2 minutes ago)
         claims.setSubject(username); // the subject/principal is whom the token is about
-        claims.setStringClaim(AuthenticationConstants.SESSION_PARAMETER, sessionName);
         if (parameters != null) {
             parameters.forEach(claims::setClaim);
         }
         try {
-            return factory.createToken(username, signToken(claims), durationTime, sessionName, parameters);
+            return factory.createToken(username, signToken(claims), durationTime, parameters);
         } catch (JoseException | WrongTypeSigningKeyException e) {
             throw new RuntimeException(e);
         }

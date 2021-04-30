@@ -10,14 +10,12 @@ public class JsonWebTokenImpl implements JsonWebToken {
     private final String owner;
     private final String rawToken;
     private final Integer timeToLive;
-    private final String sessionName;
     private final TokenParameters tokenParameters;
 
-    public JsonWebTokenImpl(String owner, String rawToken, Integer timeToLive, String sessionName, TokenParameters tokenParameters) {
+    public JsonWebTokenImpl(String owner, String rawToken, Integer timeToLive, TokenParameters tokenParameters) {
         this.owner = owner;
         this.rawToken = rawToken;
         this.timeToLive = timeToLive;
-        this.sessionName = sessionName;
         if (tokenParameters != null) {
             this.tokenParameters = tokenParameters;
         } else {
@@ -40,10 +38,6 @@ public class JsonWebTokenImpl implements JsonWebToken {
         return timeToLive;
     }
 
-    @Override
-    public String getSessionName() {
-        return sessionName;
-    }
 
     @Override
     public Object getParameter(String parameterName) {
@@ -68,7 +62,6 @@ public class JsonWebTokenImpl implements JsonWebToken {
         return Objects.equals(owner, that.owner)
                 && Objects.equals(rawToken, that.rawToken)
                 && Objects.equals(timeToLive, that.timeToLive)
-                && Objects.equals(sessionName, that.sessionName)
                 && TokenParameters.equals(tokenParameters, that.tokenParameters);
 
     }
@@ -79,13 +72,12 @@ public class JsonWebTokenImpl implements JsonWebToken {
                 "owner='" + owner + '\'' +
                 ", rawToken='" + rawToken + '\'' +
                 ", timeToLive=" + timeToLive +
-                ", sessionName='" + sessionName + '\'' +
                 ", tokenParameters=" + tokenParameters +
                 '}';
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(owner, rawToken, timeToLive, sessionName, tokenParameters);
+        return Objects.hash(owner, rawToken, timeToLive, tokenParameters);
     }
 }

@@ -3,7 +3,7 @@ package com.auth.framework.core.tokens.jwt.identity;
 import com.auth.framework.core.exceptions.ProviderException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
-import com.auth.framework.core.tokens.jwt.keys.provider.BaseKeyProvider;
+import com.auth.framework.core.tokens.jwt.keys.provider.BaseKeyPairProvider;
 import com.auth.framework.core.tokens.jwt.keys.provider.PrivateKeyProvider;
 import com.auth.framework.core.tokens.jwt.keys.provider.PublicKeyProvider;
 import com.auth.framework.core.tokens.jwt.keys.readers.hmac.HmacJsonWebKeyProvider;
@@ -27,7 +27,7 @@ class IdentityProviderTest {
 
     @BeforeEach
     public void prepare() {
-        factory = (username, rawToken, duration, session, parameters) -> new JsonWebToken() {
+        factory = (username, rawToken, duration, parameters) -> new JsonWebToken() {
             private static final long serialVersionUID = 2114203656236622532L;
 
             @Override
@@ -43,11 +43,6 @@ class IdentityProviderTest {
             @Override
             public Integer getDuration() {
                 return duration;
-            }
-
-            @Override
-            public String getSessionName() {
-                return session;
             }
 
             @Override
@@ -86,7 +81,7 @@ class IdentityProviderTest {
 
         String username = "username";
 
-        JsonWebToken jsonWebToken = identityProvider.generateTokenForUser(username, "", null);
+        JsonWebToken jsonWebToken = identityProvider.generateTokenForUser(username, null);
         String owner = identityProvider.resolveOwner(jsonWebToken.getRawToken());
 
 
@@ -101,9 +96,9 @@ class IdentityProviderTest {
         PrivateKeyProvider privateKeyProvider = new PrivateRsaKeyReaderProvider(privatePath);
         PublicKeyProvider publicKeyProvider = new PublicRsaKeyReaderProvider(publicPath);
 
-        BaseKeyProvider baseKeyProvider = new BaseKeyProvider(privateKeyProvider, publicKeyProvider);
+        BaseKeyPairProvider baseKeyPairProvider = new BaseKeyPairProvider(privateKeyProvider, publicKeyProvider);
         JsonWebKey rsaJsonWebKey = new RsaJsonWebKeyReaderProvider(
-                baseKeyProvider,
+                baseKeyPairProvider,
                 AlgorithmIdentifiers.RSA_USING_SHA256,
                 "k1"
         ).provide();
@@ -118,7 +113,7 @@ class IdentityProviderTest {
 
         String username = "username";
 
-        JsonWebToken jsonWebToken = identityProvider.generateTokenForUser(username, "", null);
+        JsonWebToken jsonWebToken = identityProvider.generateTokenForUser(username, null);
         String owner = identityProvider.resolveOwner(jsonWebToken.getRawToken());
         Assertions.assertEquals(username, owner);
     }
@@ -142,7 +137,7 @@ class IdentityProviderTest {
 
         String username = "username";
 
-        JsonWebToken jsonWebToken = identityProvider.generateTokenForUser(username, "", null);
+        JsonWebToken jsonWebToken = identityProvider.generateTokenForUser(username, null);
         String owner = identityProvider.resolveOwner(jsonWebToken.getRawToken());
         Assertions.assertEquals(username, owner);
     }

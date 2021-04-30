@@ -20,12 +20,10 @@ public class TokenFactoryImpl implements TokenFactory {
     public JsonWebToken createToken(String username,
                                     String rawToken,
                                     Integer duration,
-                                    String sessionName,
                                     TokenParameters parameters) {
         return new JsonWebTokenImpl(username,
                 encryptionService.encrypt(rawToken),
                 duration,
-                sessionName,
                 parameters);
     }
 }

@@ -33,13 +33,11 @@ public interface TokenRepository {
 
 
     /**
-     *
-     * @param owner имя юзера
-     * @param sessionName название сессии
+     * @param owner      имя юзера
      * @param parameters параметры сессии
      * @return токен юзера с заданными параметрами сессии
      */
-    JsonWebToken findTokenByParameters(String owner, String sessionName, TokenParameters parameters);
+    JsonWebToken findTokenByParameters(String owner, TokenParameters parameters);
 
 
     /**
@@ -58,7 +56,7 @@ public interface TokenRepository {
     JsonWebToken findByUsernameAndRawToken(String owner, String rawToken);
 
 
-    void deleteByUsernameAndSession(String username, String sessionName, TokenParameters parameters);
+    void deleteByUsernameAndSession(String username, TokenParameters parameters);
 
     /**
      * @param owner токен пользователя, который необходимо удалить

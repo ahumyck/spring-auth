@@ -20,6 +20,5 @@ public interface TokenFactory {
     JsonWebToken createToken(String username,
                              String rawToken,
                              Integer duration,
-                             String sessionName,
                              TokenParameters parameters);
 }

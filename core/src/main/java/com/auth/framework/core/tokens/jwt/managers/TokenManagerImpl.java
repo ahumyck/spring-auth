@@ -37,12 +37,12 @@ public class TokenManagerImpl implements TokenManager {
                                        HttpServletResponse response,
                                        String username,
                                        TokenParameters parameters) {
-        String sessionName = request.getHeader(AuthenticationConstants.USER_AGENT_HEADER_NAME);
-        JsonWebToken jsonWebToken = tokenRepository.findTokenByParameters(username, sessionName, parameters);
+//        String sessionName = request.getHeader(AuthenticationConstants.USER_AGENT_HEADER_NAME);
+        JsonWebToken jsonWebToken = tokenRepository.findTokenByParameters(username, parameters);
         if (jsonWebToken == null) {
-            log.info("Creating token with params: username = {}, sessionName = {}, params = {}",
-                    username, sessionName, parameters);
-            jsonWebToken = identityProvider.generateTokenForUser(username, sessionName, parameters);
+            log.info("Creating token with params: username = {}, params = {}",
+                    username, parameters);
+            jsonWebToken = identityProvider.generateTokenForUser(username, parameters);
             tokenRepository.save(jsonWebToken);
         }
         transport.addToken(response, jsonWebToken);

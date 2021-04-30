@@ -4,12 +4,12 @@ import com.auth.framework.core.exceptions.ProviderException;
 
 import java.security.KeyPair;
 
-public class BaseKeyProvider implements KeyPairProvider {
+public class BaseKeyPairProvider implements KeyPairProvider {
 
     private final PrivateKeyProvider privateKeyProvider;
     private final PublicKeyProvider publicKeyProvider;
 
-    public BaseKeyProvider(PrivateKeyProvider privateKeyProvider, PublicKeyProvider publicKeyProvider) {
+    public BaseKeyPairProvider(PrivateKeyProvider privateKeyProvider, PublicKeyProvider publicKeyProvider) {
         this.privateKeyProvider = privateKeyProvider;
         this.publicKeyProvider = publicKeyProvider;
     }

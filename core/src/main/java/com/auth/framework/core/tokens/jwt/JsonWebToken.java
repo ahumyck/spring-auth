@@ -12,8 +12,6 @@ public interface JsonWebToken extends Serializable {
 
     Integer getDuration();
 
-    String getSessionName();
-
     Object getParameter(String parameterName);
 
     void addParameter(String parameterName, Object parameterValue);

@@ -11,12 +11,11 @@ public interface IdentityProvider {
     /**
      * Для каждого пользователя должен быть сгенерирован уникальный токен
      *
-     * @param username    Для кого генерируются токен
-     * @param sessionName название сессии
+     * @param username Для кого генерируются токен
      * @return Токен, созданный с помощью фабрики
      * @see com.auth.framework.core.tokens.jwt.factory.TokenFactory
      */
-    JsonWebToken generateTokenForUser(String username, String sessionName, TokenParameters parameters);
+    JsonWebToken generateTokenForUser(String username, TokenParameters parameters);
 
     /**
      * @param rawToken значение токена, взятое из cookie/http header

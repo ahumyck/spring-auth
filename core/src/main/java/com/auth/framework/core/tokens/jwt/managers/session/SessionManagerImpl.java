@@ -1,6 +1,5 @@
 package com.auth.framework.core.tokens.jwt.managers.session;
 
-import com.auth.framework.core.constants.AuthenticationConstants;
 import com.auth.framework.core.exceptions.KillSessionException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.managers.TokenManager;
@@ -35,23 +34,18 @@ public class SessionManagerImpl implements SessionManager {
         if (username.equals(sessionOwner)) {
             Optional<JsonWebToken> possibleJWT = manager.validateAndGetToken(request);
             if (possibleJWT.isPresent()) {
-                String sessionName = session.getSessionName();
                 JsonWebToken jsonWebToken = possibleJWT.get();
-                String currentSessionName = request.getHeader(AuthenticationConstants.USER_AGENT_HEADER_NAME);
-
 
                 log.info(
-                        "trying to kill session with params: username - {}, session name - {}, " +
-                                "current session name - {}, session parameters - {}",
-                        username, sessionName, currentSessionName, jsonWebToken.getTokenParameters()
+                        "trying to kill session with params: username - {}, session parameters - {}",
+                        username, jsonWebToken.getTokenParameters()
                 );
 
-                if (currentSessionName.equals(sessionName) &&
-                        Objects.equals(session.getParameters(), jsonWebToken.getTokenParameters().asMap())) {
+                if (Objects.equals(session.getParameters(), jsonWebToken.getTokenParameters().asMap())) {
                     log.warn("Can't kill session that is currently using");
                     throw new KillSessionException("Can't kill active session " + session);
                 }
-                tokenRepository.deleteByUsernameAndSession(username, sessionName, new TokenParameters(session.getParameters()));
+                tokenRepository.deleteByUsernameAndSession(username, new TokenParameters(session.getParameters()));
             } else {
                 log.warn("request had no token");
             }
