@@ -16,19 +16,19 @@ import java.util.Collections;
 
 class ActionExecutorImplTest {
 
-    private final String adminRoleName = "admin";
-    private final String userRoleName = "user";
+    private final static String ADMIN_ROLE_NAME = "admin";
+    private final static String USER_ROLE_NAME = "user";
     private Action<Object> simpleAction;
     private Action<Object> actionForAdmins;
     private UserPrincipal simpleUser;
     private UserPrincipal admin;
-    private final ActionExecutor actionExecutor = new ActionExecutorImpl(new AdminValidatorWithInjectedAdminUserRoleName(adminRoleName));
+    private ActionExecutor actionExecutor;
 
 
     @BeforeEach
     public void setup() {
-        SimpleGrantedAuthority userGrantedAuthority = new SimpleGrantedAuthority(userRoleName);
-        SimpleGrantedAuthority adminGrantedAuthority = new SimpleGrantedAuthority(adminRoleName);
+        SimpleGrantedAuthority userGrantedAuthority = new SimpleGrantedAuthority(USER_ROLE_NAME);
+        SimpleGrantedAuthority adminGrantedAuthority = new SimpleGrantedAuthority(ADMIN_ROLE_NAME);
 
         simpleAction = new ActionStub(userGrantedAuthority, "nop");
         actionForAdmins = new ActionStub(adminGrantedAuthority, "nop");
@@ -40,6 +40,7 @@ class ActionExecutorImplTest {
                 null,
                 Collections.singletonList(adminGrantedAuthority),
                 null);
+        actionExecutor = new ActionExecutorImpl(new AdminValidatorWithInjectedAdminUserRoleName(ADMIN_ROLE_NAME));
     }
 
     @Test

@@ -11,7 +11,7 @@ public class AttributeConfigurer {
     protected final Map<String, Predicates<UserPrincipal>> rules = new HashMap<>();
 
     @SafeVarargs
-    public final AttributeConfigurer antMatchesAny(String pattern, Predicate<UserPrincipal>... predicates) {
+    public final AttributeConfigurer predicatesMatchAny(String pattern, Predicate<UserPrincipal>... predicates) {
         Predicates<UserPrincipal> userPrincipalPredicates = rules.computeIfAbsent(pattern, k -> new Predicates<>());
         userPrincipalPredicates.add(PredicateType.ANY, predicates);
         rules.put(pattern, userPrincipalPredicates);
@@ -19,7 +19,7 @@ public class AttributeConfigurer {
     }
 
     @SafeVarargs
-    public final AttributeConfigurer antMatchesAll(String pattern, Predicate<UserPrincipal>... predicates) {
+    public final AttributeConfigurer predicatesMatchAll(String pattern, Predicate<UserPrincipal>... predicates) {
         Predicates<UserPrincipal> userPrincipalPredicates = rules.computeIfAbsent(pattern, k -> new Predicates<>());
         userPrincipalPredicates.add(PredicateType.ALL, predicates);
         rules.put(pattern, userPrincipalPredicates);

@@ -12,10 +12,10 @@ public class AttributeConfig extends BaseAttributeConfigurerAdapter {
     @Override
     public void attributes(AttributeConfigurer attributeConfigurer) {
         attributeConfigurer
-                .antMatchesAny("/attributes/any",
+                .predicatesMatchAny("/attributes/any",
                         user -> user.getUsername().equals("user"),
                         user -> user.getPassword().equals("fake"))
-                .antMatchesAll("/attributes/all",
+                .predicatesMatchAll("/attributes/all",
                         user -> user.getUsername().equals("user"),
                         user -> user.getPassword().equals("fake"));
 

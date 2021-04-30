@@ -15,7 +15,7 @@ import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactoryImpl;
 import com.auth.framework.core.tokens.jwt.filter.TokenFilter;
 import com.auth.framework.core.tokens.jwt.identity.IdentityProvider;
-import com.auth.framework.core.tokens.jwt.identity.IdentityProviderImpl;
+import com.auth.framework.core.tokens.jwt.identity.PublicKeyIdentityProvider;
 import com.auth.framework.core.tokens.jwt.managers.TokenManager;
 import com.auth.framework.core.tokens.jwt.managers.TokenManagerImpl;
 import com.auth.framework.core.tokens.jwt.managers.session.SessionManager;
@@ -90,7 +90,7 @@ public class AuthenticationFrameworkConfiguration {
         RsaJsonWebKey rsaJsonWebKey = RsaJwkGenerator.generateJwk(2048);
         rsaJsonWebKey.setAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA256);
         rsaJsonWebKey.setKeyId("k1");
-        return new IdentityProviderImpl(rsaJsonWebKey,
+        return new PublicKeyIdentityProvider(rsaJsonWebKey,
                 AlgorithmIdentifiers.RSA_USING_SHA256,
                 300,
                 2,

@@ -21,19 +21,17 @@ public class Predicates<T> {
      */
     public boolean apply(T object) {
         List<Predicate<T>> predicatesApplyAll = predicatesByType.get(PredicateType.ALL);
-        if (predicatesApplyAll != null) {
-            for (Predicate<T> predicate : predicatesApplyAll) {
+        if (predicatesApplyAll != null && !predicatesApplyAll.isEmpty()) {
+            for (Predicate<T> predicate : predicatesApplyAll)
                 if (!predicate.test(object)) return false;
-            }
         }
 
         //if we are here it means all predicates were applied of there were none of them
 
         List<Predicate<T>> predicatesApplyAny = predicatesByType.get(PredicateType.ANY);
-        if (predicatesApplyAny != null) {
-            for (Predicate<T> predicate : predicatesApplyAny) {
+        if (predicatesApplyAny != null && !predicatesApplyAny.isEmpty()) {
+            for (Predicate<T> predicate : predicatesApplyAny)
                 if (predicate.test(object)) return true;
-            }
             return false; //at lease one of any predicates has to be applied, otherwise return false
         }
 

@@ -3,6 +3,7 @@ package com.diplom.impl;
 import com.diplom.impl.service.AttributeService;
 import com.diplom.impl.service.RoleService;
 import com.diplom.impl.service.UserService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -32,6 +33,7 @@ public class ImplApplication {
     @Autowired
     private UserService userService;
 
+    @SneakyThrows
     public static void main(String[] args) {
         SpringApplication.run(ImplApplication.class, args);
     }
