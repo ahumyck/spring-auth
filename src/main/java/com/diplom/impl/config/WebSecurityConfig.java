@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static com.diplom.impl.ImplApplication.ADMIN_ROLE_NAME;
@@ -24,7 +25,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private TokenFilter tokenFilter;
 
     @Autowired
-    private OAuth2UserService userService;
+    private DefaultOAuth2UserService userService;
 
     @Autowired
     private OAuth2OnSuccessHandler successHandler;

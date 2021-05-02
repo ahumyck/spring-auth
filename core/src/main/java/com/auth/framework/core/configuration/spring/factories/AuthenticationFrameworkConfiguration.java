@@ -38,7 +38,6 @@ import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
 import com.auth.framework.core.tokens.jwt.transport.CookieTransport;
 import com.auth.framework.core.tokens.jwt.transport.TokenTransport;
 import com.auth.framework.core.users.UserPrincipalService;
-import com.auth.framework.core.users.oauth2.OAuth2UserService;
 import com.auth.framework.core.utils.ValidationCenter;
 import lombok.extern.slf4j.Slf4j;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -231,12 +230,12 @@ public class AuthenticationFrameworkConfiguration {
 
 
     //oauth2
-    @Bean
-    @ConditionalOnMissingBean(OAuth2UserService.class)
-    public OAuth2UserService oAuth2UserService() {
-        log.warn("OAuth2Service");
-        return new OAuth2UserService();
-    }
+//    @Bean
+//    @ConditionalOnMissingBean(OAuth2UserService.class)
+//    public DefaultOAuth2UserService oAuth2UserService() {
+//        log.warn("OAuth2Service");
+//        return new OAuth2UserService();
+//    }
 
 
     //action executor
