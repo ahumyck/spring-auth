@@ -26,6 +26,7 @@ public class AttributeHandlerInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            log.info("authentication => {}", authentication);
             UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
             for (Map.Entry<AntPathRequestMatcher, Predicates<UserPrincipal>> predicatesByMatcher : configurer.getPredicatesByMatchers().entrySet()) {
                 AntPathRequestMatcher antPathRequestMatcher = predicatesByMatcher.getKey();
@@ -41,9 +42,10 @@ public class AttributeHandlerInterceptor implements HandlerInterceptor {
                     return applyResult;
                 }
             }
-        } catch (ClassCastException e) {
-            log.info("Impossible to apply attributes rules for unauthorized user", e);
+        } catch (ClassCastException | NullPointerException e) {
+            log.error("Unexpected exception occurred", e);
         }
+        log.info("returning true");
         return true;
     }
 }

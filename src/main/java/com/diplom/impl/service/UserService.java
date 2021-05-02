@@ -1,5 +1,6 @@
 package com.diplom.impl.service;
 
+import com.diplom.impl.exceptions.UserCreationException;
 import com.diplom.impl.model.entity.Role;
 import com.diplom.impl.model.entity.User;
 import com.diplom.impl.repository.UserRepository;
@@ -21,35 +22,35 @@ public class UserService {
     @Autowired
     private RoleService roleService;
 
-    public User createUser(RegistrationDataRequestBody body) throws Exception {
+    public User createUser(RegistrationDataRequestBody body) {
         String email = body.getEmail();
         String username = body.getUsername();
         String password = body.getPassword();
         return createUser(email, username, password);
     }
 
-    public User createUser(String email, String username, String password) throws Exception {
+    public User createUser(String email, String username, String password) {
         return createUserCommon(email, username, password, roleService.findRole(USER_ROLE_NAME), true);
     }
 
-    public User createUnlockedAdmin(String email, String username, String password) throws Exception {
+    public User createUnlockedAdmin(String email, String username, String password) {
         return createUserCommon(email, username, password, roleService.findRole(ADMIN_ROLE_NAME), false);
     }
 
-    public User createUnlockedUser(String email, String username, String password) throws Exception {
+    public User createUnlockedUser(String email, String username, String password) {
         return createUserCommon(email, username, password, roleService.findRole(USER_ROLE_NAME), false);
     }
 
-    private User createUserCommon(String email, String username, String password, Role role, boolean isLocked) throws Exception {
+    private User createUserCommon(String email, String username, String password, Role role, boolean isLocked) {
         isUserExists(email, username);
         return userRepository.save(new User(email, username, password, role, isLocked));
     }
 
-    private void isUserExists(String email, String username) throws Exception {
+    private void isUserExists(String email, String username) throws UserCreationException {
         if (userRepository.findByEmail(email) != null)
-            throw new Exception("Username with such email already exists");
+            throw new UserCreationException("Username with such email already exists");
         if (userRepository.findByUsername(username) != null)
-            throw new Exception("Username with such email already exists");
+            throw new UserCreationException("Username with such email already exists");
     }
 
     public boolean checkPassword(User user, String password) {

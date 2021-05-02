@@ -9,13 +9,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
+//todo: self-cleaning cache
 public class InMemoryTokenRepository implements TokenRepository {
 
     private final Map<String, List<JsonWebToken>> storage = new ConcurrentHashMap<>();
-
-    public InMemoryTokenRepository(Integer timeToLive, TimeUnit unit) {
-
-    }
 
     @Override
     public Collection<JsonWebToken> findAll() {

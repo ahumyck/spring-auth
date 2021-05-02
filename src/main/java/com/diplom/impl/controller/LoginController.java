@@ -22,7 +22,7 @@ public class LoginController {
     @Autowired
     private TokenManager manager;
 
-    @PostMapping(value = "/login")
+    @PostMapping(value = "/sign-in")
     public String requestBodyLogin(HttpServletRequest request,
                                    HttpServletResponse response,
                                    @RequestBody RegistrationDataRequestBody body) {
@@ -32,7 +32,7 @@ public class LoginController {
     }
 
 
-    @GetMapping(value = "/login")
+    @GetMapping(value = "/sign-in")
     public String requestParamLogin(HttpServletRequest request,
                                     HttpServletResponse response,
                                     @RequestParam String username,

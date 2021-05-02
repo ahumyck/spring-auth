@@ -1,6 +1,7 @@
 package com.diplom.impl.controller;
 
 import com.auth.framework.registration.token.password.manager.PasswordTokenManager;
+import com.diplom.impl.exceptions.UserCreationException;
 import com.diplom.impl.factory.email.ContentGenerator;
 import com.diplom.impl.factory.email.EmailSender;
 import com.diplom.impl.requestBody.RegistrationDataRequestBody;
@@ -32,7 +33,7 @@ public class RegisterController {
             userService.createUser(body);
             return emailSender.sendMessage(body.getEmail(),
                     contentGenerator.generateMessageForUser(body.getUsername()));
-        } catch (Exception e) {
+        } catch (UserCreationException e) {
             return "Unable to create user: " + e.getMessage();
         }
     }

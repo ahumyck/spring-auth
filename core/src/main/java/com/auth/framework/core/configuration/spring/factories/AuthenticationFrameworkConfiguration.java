@@ -38,19 +38,17 @@ import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
 import com.auth.framework.core.tokens.jwt.transport.CookieTransport;
 import com.auth.framework.core.tokens.jwt.transport.TokenTransport;
 import com.auth.framework.core.users.UserPrincipalService;
+import com.auth.framework.core.users.oauth2.OAuth2UserService;
 import com.auth.framework.core.utils.ValidationCenter;
 import lombok.extern.slf4j.Slf4j;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
-import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableConfigurationProperties({
@@ -112,10 +110,8 @@ public class AuthenticationFrameworkConfiguration {
         String privateKeyPath = properties.getPrivateKeyPath();
         String publicKeyPath = properties.getPublicKeyPath();
         if (ValidationCenter.isValidString(privateKeyPath) && ValidationCenter.isValidString(publicKeyPath)) {
-            log.warn("PrivateRsaKeyReaderProvider bean created");
             return new PrivateRsaKeyReaderProvider(properties.getPrivateKeyPath());
         }
-        log.warn("StubPrivateRsaKeyReaderProvider bean created");
         return () -> null;
     }
 
@@ -125,10 +121,8 @@ public class AuthenticationFrameworkConfiguration {
         String privateKeyPath = properties.getPrivateKeyPath();
         String publicKeyPath = properties.getPublicKeyPath();
         if (ValidationCenter.isValidString(privateKeyPath) && ValidationCenter.isValidString(publicKeyPath)) {
-            log.warn("PublicRsaKeyReaderProvider bean created");
             return new PublicRsaKeyReaderProvider(properties.getPublicKeyPath());
         }
-        log.warn("StubRsaKeyReaderProvider bean created");
         return () -> null;
 
     }
@@ -141,10 +135,8 @@ public class AuthenticationFrameworkConfiguration {
         String privateKeyPath = properties.getPrivateKeyPath();
         String publicKeyPath = properties.getPublicKeyPath();
         if (ValidationCenter.isValidString(privateKeyPath) && ValidationCenter.isValidString(publicKeyPath)) {
-            log.warn("BaseKeyPairProvider bean created");
             return new BaseKeyPairProvider(privateKeyProvider, publicKeyProvider);
         }
-        log.warn("StubKeyPairProvider bean created");
         return () -> null;
     }
 
@@ -155,14 +147,12 @@ public class AuthenticationFrameworkConfiguration {
         String privateKeyPath = properties.getPrivateKeyPath();
         String publicKeyPath = properties.getPublicKeyPath();
         if (ValidationCenter.isValidString(privateKeyPath) && ValidationCenter.isValidString(publicKeyPath)) {
-            log.warn("RsaJsonWebKeyReaderProvider bean created");
             return new RsaJsonWebKeyReaderProvider(
                     provider,
                     AlgorithmIdentifiers.RSA_USING_SHA256,
                     "rsa_sha256"
             );
         }
-        log.warn("RandomRsaJsonWebKeyProvider bean created");
         return new RandomRsaJsonWebKeyProvider();
     }
 
@@ -179,7 +169,6 @@ public class AuthenticationFrameworkConfiguration {
 
 
         if (properties.isAsymmetric()) {
-            log.warn("jsonWebKeyProvider instanceof AsymmetricJsonWebKeyProvider");
             return new AsymmetricKeyIdentityProvider(
                     asymmetricJsonWebKeyProvider.provide(),
                     timeToLive,
@@ -188,7 +177,6 @@ public class AuthenticationFrameworkConfiguration {
                     factory
             );
         } else {
-            log.warn("jsonWebKeyProvider instanceof SymmetricJsonWebKeyProvider");
             return new SymmetricKeyIdentityProvider(
                     symmetricJsonWebKeyProvider.provide(),
                     timeToLive,
@@ -208,7 +196,7 @@ public class AuthenticationFrameworkConfiguration {
     @Bean
     @ConditionalOnMissingBean(TokenRepository.class)
     public TokenRepository storage() {
-        return new InMemoryTokenRepository(300, TimeUnit.MINUTES);
+        return new InMemoryTokenRepository();
     }
 
 
@@ -240,6 +228,16 @@ public class AuthenticationFrameworkConfiguration {
         }
         return new AdminValidatorWithInjectedAdminUserRoleName(adminRoleName);
     }
+
+
+    //oauth2
+    @Bean
+    @ConditionalOnMissingBean(OAuth2UserService.class)
+    public OAuth2UserService oAuth2UserService() {
+        log.warn("OAuth2Service");
+        return new OAuth2UserService();
+    }
+
 
     //action executor
     @Bean

@@ -47,11 +47,9 @@ public class ImplApplication {
         attributeService.createAttribute(PROJECT1_ATTRIBUTE_NAME);
         attributeService.createAttribute(PROJECT2_ATTRIBUTE_NAME);
 
-        try {
-            userService.createUnlockedUser("user@email.com", "user", "user");
-            userService.createUnlockedAdmin("admin@admin.com", "admin", "admin");
-        } catch (Exception e) {
-            log.error("Cannot create user lmfao ", e);
-        }
+
+        userService.createUnlockedUser("user@email.com", "user", "user");
+        userService.createUnlockedAdmin("admin@admin.com", "admin", "admin");
+
     }
 }
