@@ -1,6 +1,0 @@
-authentication:
-  enable-tokens: true
-redis-properties:
-  host: localhost
-  port: 16379
-  time-to-live: 300

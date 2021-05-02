@@ -11,11 +11,24 @@ import com.auth.framework.core.encryption.AESEncryptionService;
 import com.auth.framework.core.encryption.EncryptionService;
 import com.auth.framework.core.encryption.generator.RandomPasswordGenerator;
 import com.auth.framework.core.encryption.generator.RandomPasswordGeneratorImpl;
+import com.auth.framework.core.exceptions.ProviderException;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactoryImpl;
 import com.auth.framework.core.tokens.jwt.filter.TokenFilter;
+import com.auth.framework.core.tokens.jwt.identity.AsymmetricKeyIdentityProvider;
 import com.auth.framework.core.tokens.jwt.identity.IdentityProvider;
-import com.auth.framework.core.tokens.jwt.identity.PublicKeyIdentityProvider;
+import com.auth.framework.core.tokens.jwt.identity.SymmetricKeyIdentityProvider;
+import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.random.RandomRsaJsonWebKeyProvider;
+import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.PrivateRsaKeyReaderProvider;
+import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.PublicRsaKeyReaderProvider;
+import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.RsaJsonWebKeyReaderProvider;
+import com.auth.framework.core.tokens.jwt.keys.provider.BaseKeyPairProvider;
+import com.auth.framework.core.tokens.jwt.keys.provider.KeyPairProvider;
+import com.auth.framework.core.tokens.jwt.keys.provider.PrivateKeyProvider;
+import com.auth.framework.core.tokens.jwt.keys.provider.PublicKeyProvider;
+import com.auth.framework.core.tokens.jwt.keys.provider.jwk.AsymmetricJsonWebKeyProvider;
+import com.auth.framework.core.tokens.jwt.keys.provider.jwk.SymmetricJsonWebKeyProvider;
+import com.auth.framework.core.tokens.jwt.keys.symmetric.hmac.HmacJsonWebKeyProvider;
 import com.auth.framework.core.tokens.jwt.managers.TokenManager;
 import com.auth.framework.core.tokens.jwt.managers.TokenManagerImpl;
 import com.auth.framework.core.tokens.jwt.managers.session.SessionManager;
@@ -27,19 +40,16 @@ import com.auth.framework.core.tokens.jwt.transport.TokenTransport;
 import com.auth.framework.core.users.UserPrincipalService;
 import com.auth.framework.core.utils.ValidationCenter;
 import lombok.extern.slf4j.Slf4j;
-import org.jose4j.jwk.RsaJsonWebKey;
-import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.lang.JoseException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 
+import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
@@ -62,46 +72,140 @@ public class AuthenticationFrameworkConfiguration {
     //encryption service
     @Bean
     @ConditionalOnMissingBean(EncryptionService.class)
-    public EncryptionService encryptionService(RandomPasswordGenerator randomPasswordGenerator) {
-        return new AESEncryptionService(randomPasswordGenerator.generatePasswordAsRawBytes());
+    public EncryptionService encryptionService(IdentityProviderProperties properties,
+                                               RandomPasswordGenerator randomPasswordGenerator) {
+        String encryptionPassword = properties.getEncryptionPassword();
+        if (ValidationCenter.isValidString(encryptionPassword)) {
+            return new AESEncryptionService(encryptionPassword.getBytes(StandardCharsets.UTF_8));
+        } else {
+            return new AESEncryptionService(randomPasswordGenerator.generatePasswordAsRawBytes());
+        }
     }
 
     //Token part
     @Bean
-    @ConditionalOnProperty("authentication.enable-tokens")
     @ConditionalOnMissingBean(TokenFactory.class)
     public TokenFactory tokenFactory(EncryptionService service) {
         return new TokenFactoryImpl(service);
     }
 
 
+    //Token identity provider part
     @Bean
-    @ConditionalOnProperty("authentication.enable-tokens")
-    @ConditionalOnMissingBean(IdentityProvider.class)
-    @ConditionalOnBean(TokenFactory.class)
-    public IdentityProvider identityProvider(IdentityProviderProperties identityProviderProperties,
-                                             TokenFactory factory) throws JoseException {
-        RsaJsonWebKey rsaJsonWebKey = RsaJwkGenerator.generateJwk(2048);
-        rsaJsonWebKey.setAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA256);
-        rsaJsonWebKey.setKeyId("k1");
-        return new PublicKeyIdentityProvider(rsaJsonWebKey,
-                AlgorithmIdentifiers.RSA_USING_SHA256,
-                300,
-                2,
-                30,
-                factory
+    @ConditionalOnMissingBean(SymmetricJsonWebKeyProvider.class)
+    public SymmetricJsonWebKeyProvider jsonWebKeyProvider(IdentityProviderProperties properties,
+                                                          RandomPasswordGenerator randomPasswordGenerator) {
+        String jwtSignPassword = properties.getJwtSignPassword();
+        if (!ValidationCenter.isValidString(jwtSignPassword)) {
+            jwtSignPassword = randomPasswordGenerator.generatePasswordThenEncodeAsBase64();
+        }
+        return new HmacJsonWebKeyProvider(
+                jwtSignPassword,
+                AlgorithmIdentifiers.HMAC_SHA512,
+                "hmac_sha512"
         );
     }
 
     @Bean
-    @ConditionalOnProperty("authentication.enable-tokens")
+    @ConditionalOnMissingBean(PrivateKeyProvider.class)
+    public PrivateKeyProvider privateKeyProvider(IdentityProviderProperties properties) {
+        String privateKeyPath = properties.getPrivateKeyPath();
+        String publicKeyPath = properties.getPublicKeyPath();
+        if (ValidationCenter.isValidString(privateKeyPath) && ValidationCenter.isValidString(publicKeyPath)) {
+            log.warn("PrivateRsaKeyReaderProvider bean created");
+            return new PrivateRsaKeyReaderProvider(properties.getPrivateKeyPath());
+        }
+        log.warn("StubPrivateRsaKeyReaderProvider bean created");
+        return () -> null;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(PublicKeyProvider.class)
+    public PublicKeyProvider publicKeyProvider(IdentityProviderProperties properties) {
+        String privateKeyPath = properties.getPrivateKeyPath();
+        String publicKeyPath = properties.getPublicKeyPath();
+        if (ValidationCenter.isValidString(privateKeyPath) && ValidationCenter.isValidString(publicKeyPath)) {
+            log.warn("PublicRsaKeyReaderProvider bean created");
+            return new PublicRsaKeyReaderProvider(properties.getPublicKeyPath());
+        }
+        log.warn("StubRsaKeyReaderProvider bean created");
+        return () -> null;
+
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(KeyPairProvider.class)
+    public KeyPairProvider keyPairProvider(IdentityProviderProperties properties,
+                                           PrivateKeyProvider privateKeyProvider,
+                                           PublicKeyProvider publicKeyProvider) {
+        String privateKeyPath = properties.getPrivateKeyPath();
+        String publicKeyPath = properties.getPublicKeyPath();
+        if (ValidationCenter.isValidString(privateKeyPath) && ValidationCenter.isValidString(publicKeyPath)) {
+            log.warn("BaseKeyPairProvider bean created");
+            return new BaseKeyPairProvider(privateKeyProvider, publicKeyProvider);
+        }
+        log.warn("StubKeyPairProvider bean created");
+        return () -> null;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(AsymmetricJsonWebKeyProvider.class)
+    public AsymmetricJsonWebKeyProvider asymmetricJsonWebKeyProvider(IdentityProviderProperties properties,
+                                                                     KeyPairProvider provider) {
+        String privateKeyPath = properties.getPrivateKeyPath();
+        String publicKeyPath = properties.getPublicKeyPath();
+        if (ValidationCenter.isValidString(privateKeyPath) && ValidationCenter.isValidString(publicKeyPath)) {
+            log.warn("RsaJsonWebKeyReaderProvider bean created");
+            return new RsaJsonWebKeyReaderProvider(
+                    provider,
+                    AlgorithmIdentifiers.RSA_USING_SHA256,
+                    "rsa_sha256"
+            );
+        }
+        log.warn("RandomRsaJsonWebKeyProvider bean created");
+        return new RandomRsaJsonWebKeyProvider();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(IdentityProvider.class)
+    @ConditionalOnBean(TokenFactory.class)
+    public IdentityProvider identityProvider(AsymmetricJsonWebKeyProvider asymmetricJsonWebKeyProvider,
+                                             SymmetricJsonWebKeyProvider symmetricJsonWebKeyProvider,
+                                             TokenFactory factory,
+                                             IdentityProviderProperties properties) throws ProviderException {
+        Integer timeToLive = ValidationCenter.validatedNumberOrDefault(properties.getTimeToLive(), 300);
+        Integer activeBefore = ValidationCenter.validatedNumberOrDefault(properties.getActiveBefore(), 2);
+        Integer allowedClockSkew = ValidationCenter.validatedNumberOrDefault(properties.getAllowedClockSkew(), 30);
+
+
+        if (properties.isAsymmetric()) {
+            log.warn("jsonWebKeyProvider instanceof AsymmetricJsonWebKeyProvider");
+            return new AsymmetricKeyIdentityProvider(
+                    asymmetricJsonWebKeyProvider.provide(),
+                    timeToLive,
+                    activeBefore,
+                    allowedClockSkew,
+                    factory
+            );
+        } else {
+            log.warn("jsonWebKeyProvider instanceof SymmetricJsonWebKeyProvider");
+            return new SymmetricKeyIdentityProvider(
+                    symmetricJsonWebKeyProvider.provide(),
+                    timeToLive,
+                    activeBefore,
+                    allowedClockSkew,
+                    factory
+            );
+        }
+    }
+
+    @Bean
     @ConditionalOnMissingBean(TokenTransport.class)
     public TokenTransport transport() {
         return new CookieTransport();
     }
 
     @Bean
-    @ConditionalOnProperty({"authentication.enable-tokens"})
     @ConditionalOnMissingBean(TokenRepository.class)
     public TokenRepository storage() {
         return new InMemoryTokenRepository(300, TimeUnit.MINUTES);
@@ -109,7 +213,6 @@ public class AuthenticationFrameworkConfiguration {
 
 
     @Bean
-    @ConditionalOnProperty("authentication.enable-tokens")
     @ConditionalOnMissingBean(TokenManager.class)
     @ConditionalOnBean(TokenRepository.class)
     public TokenManager tokenManager(IdentityProvider identityProvider,
@@ -121,7 +224,6 @@ public class AuthenticationFrameworkConfiguration {
 
 
     @Bean
-    @ConditionalOnProperty("authentication.enable-tokens")
     @ConditionalOnBean(UserPrincipalService.class)
     public TokenFilter tokenFilter(TokenManager manager,
                                    UserPrincipalService principalService) {
@@ -147,23 +249,8 @@ public class AuthenticationFrameworkConfiguration {
     }
 
 
-    //password tokens
-    //redis configuration
-    @Bean
-    @ConditionalOnProperty("authentication.enable-tokens")
-    @ConditionalOnMissingBean(LettuceConnectionFactory.class)
-    public LettuceConnectionFactory lettuceConnectionFactory(RedisJwtTokenConfigurationProperties properties) {
-        String host = properties.getHost();
-        Integer port = properties.getPort();
-        host = ValidationCenter.isValidString(host) ? host : "localhost";
-        port = ValidationCenter.isValidPort(port) ? port : 6379;
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
-        return new LettuceConnectionFactory(config);
-    }
-
     //Session manager
     @Bean
-    @ConditionalOnProperty("authentication.enable-tokens")
     @ConditionalOnMissingBean(SessionManager.class)
     public SessionManager sessionManager(TokenRepository repository, TokenManager manager) {
         return new SessionManagerImpl(repository, manager);

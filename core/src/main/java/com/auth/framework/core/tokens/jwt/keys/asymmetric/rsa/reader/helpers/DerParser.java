@@ -1,4 +1,4 @@
-package com.auth.framework.core.tokens.jwt.keys.readers.rsa.helpers;
+package com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.helpers;
 
 
 import java.io.ByteArrayInputStream;

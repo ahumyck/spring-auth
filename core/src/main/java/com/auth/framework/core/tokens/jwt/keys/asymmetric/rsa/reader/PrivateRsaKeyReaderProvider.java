@@ -1,9 +1,9 @@
-package com.auth.framework.core.tokens.jwt.keys.readers.rsa;
+package com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader;
 
 import com.auth.framework.core.exceptions.ProviderException;
 import com.auth.framework.core.tokens.jwt.keys.provider.PrivateKeyProvider;
-import com.auth.framework.core.tokens.jwt.keys.readers.rsa.helpers.Asn1Object;
-import com.auth.framework.core.tokens.jwt.keys.readers.rsa.helpers.DerParser;
+import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.helpers.Asn1Object;
+import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.helpers.DerParser;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.*;

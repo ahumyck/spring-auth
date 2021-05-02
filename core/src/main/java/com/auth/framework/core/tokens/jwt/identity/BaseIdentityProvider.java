@@ -29,13 +29,12 @@ public abstract class BaseIdentityProvider implements IdentityProvider {
     protected TokenFactory factory;
 
     public BaseIdentityProvider(JsonWebKey jsonWebKey,
-                                String allowedAlgorithm,
                                 Integer durationTime,
                                 Integer activeBefore,
                                 Integer allowedClockSkewInSeconds,
                                 TokenFactory factory) {
+        this.allowedAlgorithm = jsonWebKey.getAlgorithm();
         this.jsonWebKey = jsonWebKey;
-        this.allowedAlgorithm = allowedAlgorithm;
         this.durationTime = durationTime;
         this.activeBefore = activeBefore;
         this.allowedClockSkewInSeconds = allowedClockSkewInSeconds;

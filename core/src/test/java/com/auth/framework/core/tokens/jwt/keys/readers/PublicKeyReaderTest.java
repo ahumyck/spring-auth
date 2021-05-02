@@ -1,6 +1,6 @@
 package com.auth.framework.core.tokens.jwt.keys.readers;
 
-import com.auth.framework.core.tokens.jwt.keys.readers.rsa.PublicRsaKeyReaderProvider;
+import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.PublicRsaKeyReaderProvider;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +15,5 @@ class PublicKeyReaderTest {
         String path = "D:\\Program Files (x86)\\java\\java-diplom\\core\\src\\test\\resources\\publicKey.pem";
         PublicRsaKeyReaderProvider reader = new PublicRsaKeyReaderProvider(path);
         PublicKey publicKey = reader.provide();
-        System.out.println(publicKey);
     }
 }

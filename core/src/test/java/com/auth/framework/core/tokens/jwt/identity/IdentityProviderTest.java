@@ -8,10 +8,10 @@ import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
 import com.auth.framework.core.tokens.jwt.keys.provider.BaseKeyPairProvider;
 import com.auth.framework.core.tokens.jwt.keys.provider.PrivateKeyProvider;
 import com.auth.framework.core.tokens.jwt.keys.provider.PublicKeyProvider;
-import com.auth.framework.core.tokens.jwt.keys.readers.hmac.HmacJsonWebKeyProvider;
-import com.auth.framework.core.tokens.jwt.keys.readers.rsa.PrivateRsaKeyReaderProvider;
-import com.auth.framework.core.tokens.jwt.keys.readers.rsa.PublicRsaKeyReaderProvider;
-import com.auth.framework.core.tokens.jwt.keys.readers.rsa.RsaJsonWebKeyReaderProvider;
+import com.auth.framework.core.tokens.jwt.keys.symmetric.hmac.HmacJsonWebKeyProvider;
+import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.PrivateRsaKeyReaderProvider;
+import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.PublicRsaKeyReaderProvider;
+import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.RsaJsonWebKeyReaderProvider;
 import com.auth.framework.core.utils.DateUtils;
 import lombok.SneakyThrows;
 import org.jose4j.jwk.JsonWebKey;
@@ -83,8 +83,7 @@ class IdentityProviderTest {
         publicJsonWebKey.setAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA256);
         publicJsonWebKey.setKeyId("k1");
 
-        IdentityProvider identityProvider = new PublicKeyIdentityProvider(publicJsonWebKey,
-                AlgorithmIdentifiers.RSA_USING_SHA256,
+        IdentityProvider identityProvider = new AsymmetricKeyIdentityProvider(publicJsonWebKey,
                 300,
                 2,
                 30,
@@ -115,8 +114,7 @@ class IdentityProviderTest {
                 "k1"
         ).provide();
 
-        IdentityProvider identityProvider = new PublicKeyIdentityProvider(rsaJsonWebKey,
-                AlgorithmIdentifiers.RSA_USING_SHA256,
+        IdentityProvider identityProvider = new AsymmetricKeyIdentityProvider(rsaJsonWebKey,
                 300,
                 2,
                 30,
@@ -139,8 +137,7 @@ class IdentityProviderTest {
                 "hmac"
         ).provide();
 
-        IdentityProvider identityProvider = new HmacKeyIdentityProvider(jsonWebKey,
-                AlgorithmIdentifiers.HMAC_SHA256,
+        IdentityProvider identityProvider = new SymmetricKeyIdentityProvider(jsonWebKey,
                 300,
                 2,
                 30,

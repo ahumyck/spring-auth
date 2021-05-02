@@ -7,9 +7,9 @@ import org.jose4j.jwk.OctetSequenceJsonWebKey;
 
 import java.security.Key;
 
-public class HmacKeyIdentityProvider extends BaseIdentityProvider {
-    public HmacKeyIdentityProvider(JsonWebKey jsonWebKey, String allowedAlgorithm, Integer durationTime, Integer activeBefore, Integer allowedClockSkewInSeconds, TokenFactory factory) {
-        super(jsonWebKey, allowedAlgorithm, durationTime, activeBefore, allowedClockSkewInSeconds, factory);
+public class SymmetricKeyIdentityProvider extends BaseIdentityProvider {
+    public SymmetricKeyIdentityProvider(JsonWebKey jsonWebKey, Integer durationTime, Integer activeBefore, Integer allowedClockSkewInSeconds, TokenFactory factory) {
+        super(jsonWebKey, durationTime, activeBefore, allowedClockSkewInSeconds, factory);
     }
 
     @Override

@@ -7,15 +7,14 @@ import org.jose4j.jwk.PublicJsonWebKey;
 
 import java.security.Key;
 
-public class PublicKeyIdentityProvider extends BaseIdentityProvider {
+public class AsymmetricKeyIdentityProvider extends BaseIdentityProvider {
 
-    public PublicKeyIdentityProvider(JsonWebKey jsonWebKey,
-                                     String allowedAlgorithm,
-                                     Integer durationTime,
-                                     Integer activeBefore,
-                                     Integer allowedClockSkewInSeconds,
-                                     TokenFactory factory) {
-        super(jsonWebKey, allowedAlgorithm, durationTime, activeBefore, allowedClockSkewInSeconds, factory);
+    public AsymmetricKeyIdentityProvider(JsonWebKey jsonWebKey,
+                                         Integer durationTime,
+                                         Integer activeBefore,
+                                         Integer allowedClockSkewInSeconds,
+                                         TokenFactory factory) {
+        super(jsonWebKey, durationTime, activeBefore, allowedClockSkewInSeconds, factory);
     }
 
     @Override
