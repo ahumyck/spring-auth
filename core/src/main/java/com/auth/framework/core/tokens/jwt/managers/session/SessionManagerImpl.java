@@ -3,7 +3,6 @@ package com.auth.framework.core.tokens.jwt.managers.session;
 import com.auth.framework.core.exceptions.KillSessionException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.managers.TokenManager;
-import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
 import com.auth.framework.core.users.UserPrincipal;
 import lombok.extern.slf4j.Slf4j;
@@ -41,11 +40,11 @@ public class SessionManagerImpl implements SessionManager {
                         username, jsonWebToken.getTokenParameters()
                 );
 
-                if (Objects.equals(session.getParameters(), jsonWebToken.getTokenParameters().asMap())) {
+                if (Objects.equals(session.getParameters(), jsonWebToken.getTokenParameters())) {
                     log.warn("Can't kill session that is currently using");
                     throw new KillSessionException("Can't kill active session " + session);
                 }
-                tokenRepository.deleteByUsernameAndSession(username, new TokenParameters(session.getParameters()));
+                tokenRepository.deleteByUsernameAndSession(username, session.getParameters());
             } else {
                 log.warn("request had no token");
             }

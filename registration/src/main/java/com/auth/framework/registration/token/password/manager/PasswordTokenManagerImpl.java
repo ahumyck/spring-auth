@@ -1,8 +1,8 @@
-package com.auth.framework.core.tokens.password.manager;
+package com.auth.framework.registration.token.password.manager;
 
-import com.auth.framework.core.tokens.password.PasswordToken;
-import com.auth.framework.core.tokens.password.generator.PasswordTokenGenerator;
-import com.auth.framework.core.tokens.password.repository.PasswordTokenRepository;
+import com.auth.framework.registration.token.password.RedisPasswordToken;
+import com.auth.framework.registration.token.password.generator.PasswordTokenGenerator;
+import com.auth.framework.registration.token.password.repository.PasswordTokenRepository;
 
 public class PasswordTokenManagerImpl implements PasswordTokenManager {
 
@@ -17,13 +17,13 @@ public class PasswordTokenManagerImpl implements PasswordTokenManager {
     }
 
     @Override
-    public PasswordToken createPasswordTokenForUsername(String username) {
+    public RedisPasswordToken createPasswordTokenForUsername(String username) {
         if (storage.find(username) != null) {
             storage.remove(username);
         }
-        PasswordToken passwordToken = generator.generateToken(username, timeToLive);
-        storage.save(passwordToken);
-        return passwordToken;
+        RedisPasswordToken redisPasswordToken = generator.generateToken(username, timeToLive);
+        storage.save(redisPasswordToken);
+        return redisPasswordToken;
     }
 
     @Override

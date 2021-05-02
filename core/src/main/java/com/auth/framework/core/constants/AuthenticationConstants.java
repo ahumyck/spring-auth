@@ -6,8 +6,7 @@ public interface AuthenticationConstants {
 
     String SESSION_PARAMETER = "sessionName";
 
-    String IMPERSONALIZATION_PARAMETER = "impersonalization";
+    String IMPERSONALIZATION_BY = "impersonalizationBy";
 
     String TOKEN_PARAMETERS = "tokenParameters";
-
 }

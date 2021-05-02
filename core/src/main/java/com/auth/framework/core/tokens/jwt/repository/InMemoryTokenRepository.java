@@ -1,7 +1,6 @@
 package com.auth.framework.core.tokens.jwt.repository;
 
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
-import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -36,14 +35,14 @@ public class InMemoryTokenRepository implements TokenRepository {
     }
 
     @Override
-    public JsonWebToken findTokenByParameters(String owner, TokenParameters tokenParameters) {
+    public JsonWebToken findTokenByParameters(String owner, Map<String, Object> tokenParameters) {
         log.info("looking for user {} token ", owner);
 
         List<JsonWebToken> tokens = storage.get(owner);
         if (tokens != null) {
             JsonWebToken jsonWebToken = tokens
                     .stream()
-                    .filter(token -> TokenParameters.equals(token.getTokenParameters(), tokenParameters))
+                    .filter(token -> Objects.equals(token.getTokenParameters(), tokenParameters))
                     .findAny()
                     .orElse(null);
             if (jsonWebToken == null) {
@@ -103,12 +102,12 @@ public class InMemoryTokenRepository implements TokenRepository {
     }
 
     @Override
-    public void deleteByUsernameAndSession(String username, TokenParameters parameters) {
+    public void deleteByUsernameAndSession(String username, Map<String, Object> parameters) {
         log.info("Invalidation json web token by owner {}", username);
 
         List<JsonWebToken> tokens = storage.get(username);
         if (tokens != null) {
-            tokens.removeIf(token -> TokenParameters.equals(token.getTokenParameters(), parameters));
+            tokens.removeIf(token -> Objects.equals(token.getTokenParameters(), parameters));
         } else {
             log.warn("TokenRepository doesn't contain token for username {}", username);
             return;

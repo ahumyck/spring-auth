@@ -1,7 +1,7 @@
 package com.diplom.impl.factory;
 
-import com.auth.framework.core.tokens.password.PasswordToken;
-import com.auth.framework.core.tokens.password.manager.PasswordTokenManager;
+import com.auth.framework.registration.token.password.RedisPasswordToken;
+import com.auth.framework.registration.token.password.manager.PasswordTokenManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,8 +18,8 @@ class PasswordTokenUrlFactoryTest {
 
 
             @Override
-            public PasswordToken createPasswordTokenForUsername(String username) {
-                return new PasswordToken(username, token, 20);
+            public RedisPasswordToken createPasswordTokenForUsername(String username) {
+                return new RedisPasswordToken(username, token, 20);
             }
 
             @Override

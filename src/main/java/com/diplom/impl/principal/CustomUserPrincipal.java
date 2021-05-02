@@ -1,6 +1,5 @@
 package com.diplom.impl.principal;
 
-import com.auth.framework.core.role.AttributeGrantedAuthority;
 import com.auth.framework.core.users.UserPrincipal;
 import com.diplom.impl.model.entity.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,23 +7,17 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CustomUserPrincipal implements UserPrincipal {
 
     private static final long serialVersionUID = 2791908996117135518L;
     private final User user;
+    private final Map<String, Object> parameters = new HashMap<>();
 
     public CustomUserPrincipal(User user) {
         this.user = user;
-    }
-
-    @Override
-    public Collection<? extends AttributeGrantedAuthority> getAttributes() {
-        return user.getAttributeSet()
-                .stream()
-                .map(attribute -> new AttributeGrantedAuthority(attribute.getAttributeName()))
-                .collect(Collectors.toSet());
     }
 
     @Override
@@ -60,5 +53,30 @@ public class CustomUserPrincipal implements UserPrincipal {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    @Override
+    public void putParameter(String key, Object value) {
+        parameters.put(key, value);
+    }
+
+    @Override
+    public Object getParameter(String key) {
+        return parameters.get(key);
+    }
+
+    @Override
+    public boolean containsParameter(String key) {
+        return parameters.containsKey(key);
+    }
+
+    @Override
+    public void removeParameter(String key) {
+        parameters.remove(key);
     }
 }

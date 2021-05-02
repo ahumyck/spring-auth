@@ -22,7 +22,7 @@ public class Session implements Serializable {
 
     public Session(JsonWebToken token) {
         this.username = token.getOwner();
-        this.parameters = token.getTokenParameters().asMap();
+        this.parameters = token.getTokenParameters();
     }
 
     @Override

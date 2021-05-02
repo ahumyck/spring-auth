@@ -1,6 +1,7 @@
-package com.auth.framework.core.tokens.password.repository;
+package com.auth.framework.registration.token.password.repository;
 
-import com.auth.framework.core.tokens.password.PasswordToken;
+import com.auth.framework.registration.token.password.PasswordToken;
+import com.auth.framework.registration.token.password.RedisPasswordToken;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -17,30 +18,30 @@ public class RedisPasswordTokenRepository implements PasswordTokenRepository {
     }
 
     @Override
-    public List<PasswordToken> findAll() {
+    public List<RedisPasswordToken> findAll() {
         return hashOperations
                 .values(KEY)
                 .stream()
-                .filter(PasswordToken.class::isInstance)
-                .map(PasswordToken.class::cast)
+                .filter(RedisPasswordToken.class::isInstance)
+                .map(RedisPasswordToken.class::cast)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void save(PasswordToken token) {
+    public void save(RedisPasswordToken token) {
         hashOperations.put(KEY, token.getOwner(), token);
     }
 
     @Override
     public boolean validate(String username, String token) {
-        PasswordToken passwordToken = find(username);
-        if (passwordToken == null) return false;
-        return passwordToken.getToken().equals(token);
+        RedisPasswordToken redisPasswordToken = find(username);
+        if (redisPasswordToken == null) return false;
+        return redisPasswordToken.getToken().equals(token);
     }
 
     @Override
-    public PasswordToken find(String username) {
-        return (PasswordToken) hashOperations.get(KEY, username);
+    public RedisPasswordToken find(String username) {
+        return (RedisPasswordToken) hashOperations.get(KEY, username);
     }
 
     @Override

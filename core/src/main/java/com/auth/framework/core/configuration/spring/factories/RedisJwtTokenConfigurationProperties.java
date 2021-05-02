@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("redis-properties")
 @Data
-public class RedisPasswordConfigurationProperties {
+public class RedisJwtTokenConfigurationProperties {
     private String host;
     private Integer port;
     private Integer timeToLive;

@@ -24,13 +24,6 @@ import com.auth.framework.core.tokens.jwt.repository.InMemoryTokenRepository;
 import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
 import com.auth.framework.core.tokens.jwt.transport.CookieTransport;
 import com.auth.framework.core.tokens.jwt.transport.TokenTransport;
-import com.auth.framework.core.tokens.password.PasswordToken;
-import com.auth.framework.core.tokens.password.generator.PasswordTokenGenerator;
-import com.auth.framework.core.tokens.password.generator.PasswordTokenGeneratorImpl;
-import com.auth.framework.core.tokens.password.manager.PasswordTokenManager;
-import com.auth.framework.core.tokens.password.manager.PasswordTokenManagerImpl;
-import com.auth.framework.core.tokens.password.repository.PasswordTokenRepository;
-import com.auth.framework.core.tokens.password.repository.RedisPasswordTokenRepository;
 import com.auth.framework.core.users.UserPrincipalService;
 import com.auth.framework.core.utils.ValidationCenter;
 import lombok.extern.slf4j.Slf4j;
@@ -46,14 +39,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-@EnableConfigurationProperties({AuthenticationFrameworkProperties.class,
-        RedisPasswordConfigurationProperties.class,
-        AuthenticationFrameworkProperties.IdentityProviderProperties.class})
+@EnableConfigurationProperties({
+        AuthenticationFrameworkProperties.class,
+        RedisJwtTokenConfigurationProperties.class,
+        IdentityProviderProperties.class
+})
 @Slf4j
 public class AuthenticationFrameworkConfiguration {
 
@@ -85,7 +79,7 @@ public class AuthenticationFrameworkConfiguration {
     @ConditionalOnProperty("authentication.enable-tokens")
     @ConditionalOnMissingBean(IdentityProvider.class)
     @ConditionalOnBean(TokenFactory.class)
-    public IdentityProvider identityProvider(AuthenticationFrameworkProperties.IdentityProviderProperties identityProviderProperties,
+    public IdentityProvider identityProvider(IdentityProviderProperties identityProviderProperties,
                                              TokenFactory factory) throws JoseException {
         RsaJsonWebKey rsaJsonWebKey = RsaJwkGenerator.generateJwk(2048);
         rsaJsonWebKey.setAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA256);
@@ -158,48 +152,13 @@ public class AuthenticationFrameworkConfiguration {
     @Bean
     @ConditionalOnProperty("authentication.enable-tokens")
     @ConditionalOnMissingBean(LettuceConnectionFactory.class)
-    public LettuceConnectionFactory lettuceConnectionFactory(RedisPasswordConfigurationProperties properties) {
+    public LettuceConnectionFactory lettuceConnectionFactory(RedisJwtTokenConfigurationProperties properties) {
         String host = properties.getHost();
         Integer port = properties.getPort();
         host = ValidationCenter.isValidString(host) ? host : "localhost";
         port = ValidationCenter.isValidPort(port) ? port : 6379;
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
         return new LettuceConnectionFactory(config);
-    }
-
-    @Bean
-    @ConditionalOnProperty("authentication.enable-tokens")
-    @ConditionalOnMissingBean(RedisTemplate.class)
-    public RedisTemplate<String, PasswordToken> redisTemplate(LettuceConnectionFactory lettuceConnectionFactory) {
-        RedisTemplate<String, PasswordToken> template = new RedisTemplate<>();
-        template.setConnectionFactory(lettuceConnectionFactory);
-        return template;
-    }
-
-
-    @Bean
-    @ConditionalOnProperty("authentication.enable-tokens")
-    @ConditionalOnMissingBean(PasswordTokenRepository.class)
-    public PasswordTokenRepository tokenRedisRepository(RedisTemplate<String, PasswordToken> redisTemplate) {
-        return new RedisPasswordTokenRepository(redisTemplate);
-    }
-
-
-    @Bean
-    @ConditionalOnProperty("authentication.enable-tokens")
-    @ConditionalOnMissingBean(PasswordTokenGenerator.class)
-    public PasswordTokenGenerator passwordTokenGenerator() {
-        return new PasswordTokenGeneratorImpl();
-    }
-
-
-    @Bean
-    @ConditionalOnProperty("authentication.enable-tokens")
-    @ConditionalOnMissingBean(PasswordTokenManager.class)
-    public PasswordTokenManager manager(PasswordTokenGenerator generator,
-                                        PasswordTokenRepository repository,
-                                        RedisPasswordConfigurationProperties properties) {
-        return new PasswordTokenManagerImpl(generator, repository, properties.getTimeToLive());
     }
 
     //Session manager

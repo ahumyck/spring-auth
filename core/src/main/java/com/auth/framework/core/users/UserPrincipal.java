@@ -1,11 +1,18 @@
 package com.auth.framework.core.users;
 
-import com.auth.framework.core.role.AttributeGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
+import java.util.Map;
 
 public interface UserPrincipal extends UserDetails {
 
-    Collection<? extends AttributeGrantedAuthority> getAttributes();
+    Map<String, Object> getParameters();
+
+    void putParameter(String key, Object value);
+
+    Object getParameter(String key);
+
+    boolean containsParameter(String key);
+
+    void removeParameter(String key);
 }

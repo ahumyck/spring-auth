@@ -10,12 +10,5 @@ public class AuthenticationFrameworkProperties {
     private String encryptionServicePassword;
     private String jsonWebTokenPassword;
 
-    private String enableAttributeModel;
     private String adminRoleName;
-
-    @ConfigurationProperties("identity-provider-properties")
-    @Data
-    public static class IdentityProviderProperties {
-        private boolean property;
-    }
 }

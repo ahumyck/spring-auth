@@ -1,7 +1,7 @@
 package com.diplom.impl.config;
 
 import com.auth.framework.core.attribute.AttributeConfigurer;
-import com.auth.framework.core.attribute.AttributeHandlerInterceptor;
+import com.auth.framework.core.attribute.interceptor.AttributeHandlerInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

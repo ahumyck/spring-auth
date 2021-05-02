@@ -1,6 +1,8 @@
 package com.auth.framework.core.tokens.jwt.identity;
 
 import com.auth.framework.core.exceptions.ProviderException;
+import com.auth.framework.core.exceptions.ResolveOwnerException;
+import com.auth.framework.core.exceptions.TokenGenerationException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
 import com.auth.framework.core.tokens.jwt.keys.provider.BaseKeyPairProvider;
@@ -10,7 +12,7 @@ import com.auth.framework.core.tokens.jwt.keys.readers.hmac.HmacJsonWebKeyProvid
 import com.auth.framework.core.tokens.jwt.keys.readers.rsa.PrivateRsaKeyReaderProvider;
 import com.auth.framework.core.tokens.jwt.keys.readers.rsa.PublicRsaKeyReaderProvider;
 import com.auth.framework.core.tokens.jwt.keys.readers.rsa.RsaJsonWebKeyReaderProvider;
-import com.auth.framework.core.tokens.jwt.params.TokenParameters;
+import com.auth.framework.core.utils.DateUtils;
 import lombok.SneakyThrows;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.RsaJwkGenerator;
@@ -19,7 +21,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 class IdentityProviderTest {
 
@@ -29,6 +34,8 @@ class IdentityProviderTest {
     public void prepare() {
         factory = (username, rawToken, duration, parameters) -> new JsonWebToken() {
             private static final long serialVersionUID = 2114203656236622532L;
+
+            private final Date expireDate = DateUtils.createDateFromNow(duration, TimeUnit.MINUTES);
 
             @Override
             public String getOwner() {
@@ -41,8 +48,13 @@ class IdentityProviderTest {
             }
 
             @Override
-            public Integer getDuration() {
+            public Integer getTimeToLive() {
                 return duration;
+            }
+
+            @Override
+            public Date getExpireDate() {
+                return expireDate;
             }
 
             @Override
@@ -56,7 +68,7 @@ class IdentityProviderTest {
             }
 
             @Override
-            public TokenParameters getTokenParameters() {
+            public Map<String, Object> getTokenParameters() {
                 return parameters;
             }
         };
@@ -89,7 +101,7 @@ class IdentityProviderTest {
     }
 
     @Test
-    public void rsaJwkTest() throws ProviderException {
+    public void rsaJwkTest() throws ProviderException, TokenGenerationException, ResolveOwnerException {
         String privatePath = "D:\\Program Files (x86)\\java\\java-diplom\\core\\src\\test\\resources\\privateKey.pem";
         String publicPath = "D:\\Program Files (x86)\\java\\java-diplom\\core\\src\\test\\resources\\publicKey.pem";
 
@@ -119,7 +131,7 @@ class IdentityProviderTest {
     }
 
     @Test
-    public void hmacJwkTest() throws ProviderException {
+    public void hmacJwkTest() throws ProviderException, TokenGenerationException, ResolveOwnerException {
 
         JsonWebKey jsonWebKey = new HmacJsonWebKeyProvider(
                 UUID.randomUUID().toString(),

@@ -2,6 +2,7 @@ package com.auth.framework.core.tokens.jwt.filter;
 
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.managers.TokenManager;
+import com.auth.framework.core.users.AnonymousUserPrincipal;
 import com.auth.framework.core.users.PrincipalAuthenticationToken;
 import com.auth.framework.core.users.UserPrincipal;
 import com.auth.framework.core.users.UserPrincipalService;
@@ -39,15 +40,20 @@ public class TokenFilter extends OncePerRequestFilter {
             Optional<JsonWebToken> optionalToken = manager.validateAndGetToken(request);
             if (optionalToken.isPresent()) {
                 JsonWebToken jsonWebToken = optionalToken.get();
-
-                fillResponseHeader(response, jsonWebToken);
-
                 String owner = jsonWebToken.getOwner();
                 UserPrincipal userPrincipal = principalService.loadUserByUsername(owner);
+
+                jsonWebToken
+                        .getTokenParameters()
+                        .forEach(userPrincipal::putParameter);
+
+
                 PrincipalAuthenticationToken authenticationToken = new PrincipalAuthenticationToken(userPrincipal);
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             } else {
-                SecurityContextHolder.clearContext();
+                UserPrincipal anonymousUserPrincipal = new AnonymousUserPrincipal();
+                PrincipalAuthenticationToken authenticationToken = new PrincipalAuthenticationToken(anonymousUserPrincipal);
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         } catch (Exception e) {
             log.error("Error validating token: ", e);
@@ -56,7 +62,5 @@ public class TokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void fillResponseHeader(HttpServletResponse response, JsonWebToken jsonWebToken) {
-        jsonWebToken.getTokenParameters().forEach((key, value) -> response.addHeader(key, (String) value));
-    }
+
 }

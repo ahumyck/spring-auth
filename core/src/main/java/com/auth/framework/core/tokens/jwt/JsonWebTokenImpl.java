@@ -1,8 +1,13 @@
 package com.auth.framework.core.tokens.jwt;
 
-import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 
+import com.auth.framework.core.utils.DateUtils;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class JsonWebTokenImpl implements JsonWebToken {
     private static final long serialVersionUID = -946953360423005898L;
@@ -10,16 +15,18 @@ public class JsonWebTokenImpl implements JsonWebToken {
     private final String owner;
     private final String rawToken;
     private final Integer timeToLive;
-    private final TokenParameters tokenParameters;
+    private final Date expireDate;
+    private final Map<String, Object> tokenParameters;
 
-    public JsonWebTokenImpl(String owner, String rawToken, Integer timeToLive, TokenParameters tokenParameters) {
+    public JsonWebTokenImpl(String owner, String rawToken, Integer timeToLive, Map<String, Object> tokenParameters) {
         this.owner = owner;
         this.rawToken = rawToken;
         this.timeToLive = timeToLive;
+        this.expireDate = DateUtils.createDateFromNow(timeToLive, TimeUnit.MINUTES);
         if (tokenParameters != null) {
             this.tokenParameters = tokenParameters;
         } else {
-            this.tokenParameters = new TokenParameters();
+            this.tokenParameters = new HashMap<>();
         }
     }
 
@@ -34,8 +41,13 @@ public class JsonWebTokenImpl implements JsonWebToken {
     }
 
     @Override
-    public Integer getDuration() {
+    public Integer getTimeToLive() {
         return timeToLive;
+    }
+
+    @Override
+    public Date getExpireDate() {
+        return expireDate;
     }
 
 
@@ -50,7 +62,7 @@ public class JsonWebTokenImpl implements JsonWebToken {
     }
 
     @Override
-    public TokenParameters getTokenParameters() {
+    public Map<String, Object> getTokenParameters() {
         return tokenParameters;
     }
 
@@ -62,7 +74,7 @@ public class JsonWebTokenImpl implements JsonWebToken {
         return Objects.equals(owner, that.owner)
                 && Objects.equals(rawToken, that.rawToken)
                 && Objects.equals(timeToLive, that.timeToLive)
-                && TokenParameters.equals(tokenParameters, that.tokenParameters);
+                && Objects.equals(tokenParameters, that.tokenParameters);
 
     }
 

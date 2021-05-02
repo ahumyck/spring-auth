@@ -5,12 +5,13 @@ import com.auth.framework.core.action.executor.ActionExecutor;
 import com.auth.framework.core.constants.AuthenticationConstants;
 import com.auth.framework.core.exceptions.ActionExecutionException;
 import com.auth.framework.core.exceptions.KillSessionException;
+import com.auth.framework.core.exceptions.TokenGenerationException;
 import com.auth.framework.core.exceptions.UserHasNoAccessException;
 import com.auth.framework.core.tokens.jwt.managers.TokenManager;
 import com.auth.framework.core.tokens.jwt.managers.session.Session;
 import com.auth.framework.core.tokens.jwt.managers.session.SessionManager;
-import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 import com.auth.framework.core.users.UserPrincipal;
+import com.diplom.impl.principal.CustomUserPrincipalService;
 import com.diplom.impl.requestBody.UsernameRequestBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.diplom.impl.ImplApplication.ADMIN_ROLE_NAME;
 
@@ -38,6 +40,8 @@ public class AdminController {
 
     private final GrantedAuthority adminAuthority = new SimpleGrantedAuthority(ADMIN_ROLE_NAME);
 
+    @Autowired
+    private CustomUserPrincipalService userPrincipalService;
 
     @Autowired
     private TokenManager tokenManager;
@@ -50,23 +54,37 @@ public class AdminController {
 
 
     @PostMapping(value = "/impersonalization")
-    public TokenParameters impersonalizeFor(HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            @RequestBody UsernameRequestBody body) {
+    public UserPrincipal impersonalizeFor(HttpServletRequest request,
+                                          HttpServletResponse response,
+                                          @RequestBody UsernameRequestBody body) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal principal = null;
         final String username = body.getUsername();
         try {
-            UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
-            return actionExecutor.executeAs(principal, new Action<TokenParameters>() {
+            principal = (UserPrincipal) authentication.getPrincipal();
+            UserPrincipal immutablePrincipal = principal;
+            return actionExecutor.executeAs(principal, new Action<UserPrincipal>() {
                 @Override
-                public TokenParameters execute() {
-                    TokenParameters parameters = TokenParameters
-                            .getBuilder()
-                            .addParameter(AuthenticationConstants.IMPERSONALIZATION_PARAMETER, username)
-                            .build();
-                    tokenManager.createTokenForUsername(request, response, username, parameters);
-                    response.addHeader(AuthenticationConstants.IMPERSONALIZATION_PARAMETER, username);
-                    return parameters;
+                public UserPrincipal execute() throws ActionExecutionException {
+                    try {
+                        Map<String, Object> parameters = new HashMap<>();
+
+                        parameters.put(AuthenticationConstants.IMPERSONALIZATION_BY,
+                                immutablePrincipal.getUsername());
+
+                        parameters.put(AuthenticationConstants.USER_AGENT_HEADER_NAME,
+                                request.getHeader(AuthenticationConstants.USER_AGENT_HEADER_NAME));
+
+                        tokenManager.createTokenForUsername(response, username, parameters);
+
+                        UserPrincipal impersonalizationPrincipal = userPrincipalService.loadUserByUsername(username);
+
+                        impersonalizationPrincipal.putParameter(AuthenticationConstants.IMPERSONALIZATION_BY,
+                                immutablePrincipal.getUsername());
+                        return impersonalizationPrincipal;
+                    } catch (TokenGenerationException e) {
+                        throw new ActionExecutionException(e);
+                    }
                 }
 
                 @Override
@@ -81,7 +99,7 @@ public class AdminController {
         } catch (ActionExecutionException e) {
             log.warn("Exception while executing action: ", e);
         }
-        return new TokenParameters(Collections.emptyMap());
+        return principal;
     }
 
 
@@ -112,7 +130,6 @@ public class AdminController {
 
     @PostMapping(value = "/sessions/kill")
     public List<Session> killSession(HttpServletRequest request,
-                                     HttpServletResponse response,
                                      @RequestBody Session session) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         try {

@@ -1,9 +1,9 @@
 package com.auth.framework.core.tokens.jwt.repository;
 
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
-import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 
 import java.util.Collection;
+import java.util.Map;
 
 
 /**
@@ -37,7 +37,7 @@ public interface TokenRepository {
      * @param parameters параметры сессии
      * @return токен юзера с заданными параметрами сессии
      */
-    JsonWebToken findTokenByParameters(String owner, TokenParameters parameters);
+    JsonWebToken findTokenByParameters(String owner, Map<String, Object> parameters);
 
 
     /**
@@ -56,7 +56,7 @@ public interface TokenRepository {
     JsonWebToken findByUsernameAndRawToken(String owner, String rawToken);
 
 
-    void deleteByUsernameAndSession(String username, TokenParameters parameters);
+    void deleteByUsernameAndSession(String username, Map<String, Object> parameters);
 
     /**
      * @param owner токен пользователя, который необходимо удалить

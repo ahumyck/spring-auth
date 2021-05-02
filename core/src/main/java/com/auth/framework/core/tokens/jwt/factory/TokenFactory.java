@@ -1,7 +1,8 @@
 package com.auth.framework.core.tokens.jwt.factory;
 
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
-import com.auth.framework.core.tokens.jwt.params.TokenParameters;
+
+import java.util.Map;
 
 
 /**
@@ -20,5 +21,5 @@ public interface TokenFactory {
     JsonWebToken createToken(String username,
                              String rawToken,
                              Integer duration,
-                             TokenParameters parameters);
+                             Map<String, Object> parameters);
 }

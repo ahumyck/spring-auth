@@ -1,11 +1,12 @@
 package com.auth.framework.core.tokens.jwt.managers;
 
 
+import com.auth.framework.core.exceptions.TokenGenerationException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
-import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -26,13 +27,11 @@ public interface TokenManager {
      * </p>
      *
      * @param response ответ пользователю
-     * @param request  запрос пользователя
      * @param username для кого будет сгенерирован токен
      */
-    void createTokenForUsername(HttpServletRequest request,
-                                HttpServletResponse response,
+    void createTokenForUsername(HttpServletResponse response,
                                 String username,
-                                TokenParameters parameters);
+                                Map<String, Object> parameters) throws TokenGenerationException;
 
 
     /**

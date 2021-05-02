@@ -1,8 +1,9 @@
 package com.auth.framework.core.tokens.jwt;
 
-import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.Map;
 
 public interface JsonWebToken extends Serializable {
 
@@ -10,11 +11,13 @@ public interface JsonWebToken extends Serializable {
 
     String getRawToken();
 
-    Integer getDuration();
+    Integer getTimeToLive();
+
+    Date getExpireDate();
 
     Object getParameter(String parameterName);
 
     void addParameter(String parameterName, Object parameterValue);
 
-    TokenParameters getTokenParameters();
+    Map<String, Object> getTokenParameters();
 }

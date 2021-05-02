@@ -1,16 +1,16 @@
 package com.auth.framework.core.tokens.jwt.managers;
 
-import com.auth.framework.core.constants.AuthenticationConstants;
 import com.auth.framework.core.encryption.EncryptionService;
+import com.auth.framework.core.exceptions.TokenGenerationException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.identity.IdentityProvider;
-import com.auth.framework.core.tokens.jwt.params.TokenParameters;
 import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
 import com.auth.framework.core.tokens.jwt.transport.TokenTransport;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -33,11 +33,9 @@ public class TokenManagerImpl implements TokenManager {
     }
 
     @Override
-    public void createTokenForUsername(HttpServletRequest request,
-                                       HttpServletResponse response,
+    public void createTokenForUsername(HttpServletResponse response,
                                        String username,
-                                       TokenParameters parameters) {
-//        String sessionName = request.getHeader(AuthenticationConstants.USER_AGENT_HEADER_NAME);
+                                       Map<String, Object> parameters) throws TokenGenerationException {
         JsonWebToken jsonWebToken = tokenRepository.findTokenByParameters(username, parameters);
         if (jsonWebToken == null) {
             log.info("Creating token with params: username = {}, params = {}",

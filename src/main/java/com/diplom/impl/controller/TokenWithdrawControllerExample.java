@@ -37,10 +37,10 @@ public class TokenWithdrawControllerExample {
             return (String) authentication.getPrincipal();
         }
 
-        log.info("Username {} has following authorities {} and attributes {}",
+        log.info("Username {} has following authorities {} and parameters {}",
                 principal.getUsername(),
                 principal.getAuthorities(),
-                principal.getAttributes());
+                principal.getParameters());
 
         try {
             Action<Object> withdrawAction = actionFactory.getWithdrawAction(requestBody.getUsername());

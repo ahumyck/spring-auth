@@ -12,7 +12,7 @@ public class CookieTransport implements TokenTransport {
     private final static String PRINCIPAL_COOKIE = "principal_cookie";
 
     private Cookie createCookie(JsonWebToken jsonWebToken) {
-        return createCookie(jsonWebToken.getRawToken(), jsonWebToken.getDuration());
+        return createCookie(jsonWebToken.getRawToken(), jsonWebToken.getTimeToLive());
     }
 
     private Cookie createCookie(String token, int duration) {

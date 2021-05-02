@@ -1,7 +1,7 @@
 package com.diplom.impl.config;
 
 import com.auth.framework.core.attribute.AttributeConfigurer;
-import com.auth.framework.core.attribute.adapter.BaseAttributeConfigurerAdapter;
+import com.auth.framework.core.attribute.BaseAttributeConfigurerAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 

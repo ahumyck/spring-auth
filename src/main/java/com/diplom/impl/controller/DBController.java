@@ -3,8 +3,8 @@ package com.diplom.impl.controller;
 import com.auth.framework.core.constants.AuthenticationConstants;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
-import com.auth.framework.core.tokens.password.PasswordToken;
-import com.auth.framework.core.tokens.password.repository.PasswordTokenRepository;
+import com.auth.framework.registration.token.password.RedisPasswordToken;
+import com.auth.framework.registration.token.password.repository.PasswordTokenRepository;
 import com.diplom.impl.repository.AttributeRepository;
 import com.diplom.impl.repository.RoleRepository;
 import com.diplom.impl.repository.UserRepository;
@@ -46,7 +46,7 @@ public class DBController {
         log.info("password tokens {}",
                 passwordTokenRepository.findAll()
                         .stream()
-                        .map(PasswordToken::getOwner)
+                        .map(RedisPasswordToken::getOwner)
                         .collect(Collectors.toList()));
     }
 

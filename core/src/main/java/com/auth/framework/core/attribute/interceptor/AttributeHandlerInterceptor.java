@@ -1,5 +1,7 @@
-package com.auth.framework.core.attribute;
+package com.auth.framework.core.attribute.interceptor;
 
+import com.auth.framework.core.attribute.AttributeConfigurer;
+import com.auth.framework.core.attribute.Predicates;
 import com.auth.framework.core.users.UserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -22,21 +24,14 @@ public class AttributeHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-//        log.info("rules => {}", configurer.rules);
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            log.info("preHandling request: {}, {}", request.getRequestURL().toString(), request.getRequestURI());
-            for (Map.Entry<String, Predicates<UserPrincipal>> predicatesByPattern : configurer.rules.entrySet()) {
-                String patternKey = predicatesByPattern.getKey();
-//                log.info("preHandling patternKey {} for request", patternKey);
-                AntPathRequestMatcher antPathRequestMatcher = new AntPathRequestMatcher(patternKey);
+            UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+            for (Map.Entry<AntPathRequestMatcher, Predicates<UserPrincipal>> predicatesByMatcher : configurer.getPredicatesByMatchers().entrySet()) {
+                AntPathRequestMatcher antPathRequestMatcher = predicatesByMatcher.getKey();
                 if (antPathRequestMatcher.matches(request)) {
-//                    log.info("patternKey {} matched for request", patternKey);
-                    UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
-                    Predicates<UserPrincipal> predicates = predicatesByPattern.getValue();
+                    Predicates<UserPrincipal> predicates = predicatesByMatcher.getValue();
                     boolean applyResult = predicates.apply(principal);
-//                    log.info("apply result for patternKey {}, principal {} and request: {}",
-//                            patternKey, principal.getUsername(), apply);
                     if (!applyResult) {
                         String errorMsg = "User" + principal.getUsername() +
                                 "has no attributes to get access for " + request.getRequestURI();

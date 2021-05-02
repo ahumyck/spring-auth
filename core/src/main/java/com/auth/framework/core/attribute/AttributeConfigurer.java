@@ -1,14 +1,30 @@
 package com.auth.framework.core.attribute;
 
 import com.auth.framework.core.users.UserPrincipal;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 public class AttributeConfigurer {
 
-    protected final Map<String, Predicates<UserPrincipal>> rules = new HashMap<>();
+    protected final Map<String, Predicates<UserPrincipal>> rules = new ConcurrentHashMap<>();
+
+    protected final Map<AntPathRequestMatcher, Predicates<UserPrincipal>> predicatesRules = new TreeMap<>(
+            Comparator.comparing(AntPathRequestMatcher::getPattern).reversed()
+    );
+
+    public Map<String, Predicates<UserPrincipal>> getPredicatesByPattern() {
+        return Collections.unmodifiableMap(rules);
+    }
+
+    public Map<AntPathRequestMatcher, Predicates<UserPrincipal>> getPredicatesByMatchers() {
+        return Collections.unmodifiableMap(predicatesRules);
+    }
 
     @SafeVarargs
     public final AttributeConfigurer predicatesMatchAny(String pattern, Predicate<UserPrincipal>... predicates) {
