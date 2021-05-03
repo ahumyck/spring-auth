@@ -4,6 +4,7 @@ import com.auth.framework.core.attribute.AttributeConfigurer;
 import com.auth.framework.core.attribute.Predicates;
 import com.auth.framework.core.users.UserPrincipal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -35,14 +36,17 @@ public class AttributeHandlerInterceptor implements HandlerInterceptor {
                     Predicates<UserPrincipal> predicates = predicatesByMatcher.getValue();
                     boolean applyResult = predicates.apply(principal);
                     if (!applyResult) {
-                        log.warn("User with name {} has no attributes to get access for {}", principal.getUsername(), request.getRequestURI());
+                        String errorMsg = "User " + principal.getUsername() +
+                                " has no attributes to get access for " + request.getRequestURI();
+                        log.warn(errorMsg);
+                        response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     }
                     return applyResult;
                 }
             }
         } catch (ClassCastException | NullPointerException e) {
             log.error("Unexpected exception occurred", e);
-            return false;
+            response.sendError(401, "User has no attributes to get access for " + request.getRequestURI());
         }
         return true;
     }
