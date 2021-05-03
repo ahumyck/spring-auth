@@ -3,10 +3,9 @@ package com.diplom.impl.model.entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,36 +29,25 @@ public class User {
     private String username;
     private String password;
 
-    @ManyToOne
+    @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
-    private Role role;
+    private Set<Role> roles = new HashSet<>();
 
     private boolean isLocked;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @Fetch(FetchMode.SELECT)
-    private Set<Attribute> attributeSet = new HashSet<>();
-
-    public User(String email, String username, String password, Role role) {
+    public User(String email, String username, String password, boolean isLocked, Role... roles) {
         this.email = email;
         this.username = username;
         this.password = password;
-        this.role = role;
-        this.isLocked = true;
-    }
-
-    public User(String email, String username, String password, Role role, boolean isLocked) {
-        this.email = email;
-        this.username = username;
-        this.password = password;
-        this.role = role;
+        this.roles.addAll(Arrays.asList(roles));
         this.isLocked = isLocked;
     }
 
-    public User(String email, String username, String password) {
+    public User(String email, String username, String password, boolean isLocked, Set<Role> roles) {
         this.email = email;
         this.username = username;
         this.password = password;
-        this.isLocked = true;
+        if (roles != null) this.roles = roles;
+        this.isLocked = isLocked;
     }
 }

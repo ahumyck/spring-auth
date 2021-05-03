@@ -5,7 +5,6 @@ import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
 import com.auth.framework.registration.token.password.RedisPasswordToken;
 import com.auth.framework.registration.token.password.repository.PasswordTokenRepository;
-import com.diplom.impl.repository.AttributeRepository;
 import com.diplom.impl.repository.RoleRepository;
 import com.diplom.impl.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +20,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DBController {
 
-    @Autowired
-    private AttributeRepository attributeRepository;
+
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -35,7 +33,6 @@ public class DBController {
 
     @PostMapping(value = "/db")
     public void db() {
-        log.info("attributes {}", attributeRepository.findAll());
         log.info("users {}", userRepository.findAll());
         log.info("roles {}", roleRepository.findAll());
         log.info("jwt {}",

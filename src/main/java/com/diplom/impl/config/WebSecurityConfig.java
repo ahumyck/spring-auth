@@ -1,9 +1,11 @@
 package com.diplom.impl.config;
 
+import com.auth.framework.core.encryption.generator.RandomPasswordGenerator;
 import com.auth.framework.core.tokens.jwt.filter.TokenFilter;
-import com.auth.framework.core.users.oauth2.OAuth2UserService;
+import com.auth.framework.core.users.UserPrincipalService;
 import com.diplom.impl.oauth2.OAuth2OnFailureHandler;
 import com.diplom.impl.oauth2.OAuth2OnSuccessHandler;
+import com.diplom.impl.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -25,13 +27,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private TokenFilter tokenFilter;
 
     @Autowired
-    private DefaultOAuth2UserService userService;
-
-    @Autowired
-    private OAuth2OnSuccessHandler successHandler;
+    private DefaultOAuth2UserService oAuth2UserService;
 
     @Autowired
     private OAuth2OnFailureHandler failureHandler;
+
+    @Autowired
+    public OAuth2OnSuccessHandler successHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -47,12 +49,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .mvcMatchers("/**").permitAll()
                 .and()
                 .oauth2Login()
-                    .userInfoEndpoint()
-                    .userService(userService)
+                .userInfoEndpoint()
+                    .userService(oAuth2UserService)
                     .and()
                     .successHandler(successHandler)
                     .failureHandler(failureHandler)
-                .permitAll()
+                    .permitAll()
                 .and()
                 .logout().permitAll()
                 .and()

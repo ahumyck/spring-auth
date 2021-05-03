@@ -1,15 +1,19 @@
 package com.diplom.impl.principal;
 
 import com.auth.framework.core.users.UserPrincipal;
+import com.diplom.impl.model.entity.Role;
 import com.diplom.impl.model.entity.User;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+@ToString
 public class CustomUserPrincipal implements UserPrincipal {
 
     private static final long serialVersionUID = 2791908996117135518L;
@@ -22,7 +26,11 @@ public class CustomUserPrincipal implements UserPrincipal {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getRoleName()));
+        return user.getRoles()
+                .stream()
+                .map(Role::getRoleName)
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     @Override

@@ -38,6 +38,7 @@ import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
 import com.auth.framework.core.tokens.jwt.transport.CookieTransport;
 import com.auth.framework.core.tokens.jwt.transport.TokenTransport;
 import com.auth.framework.core.users.UserPrincipalService;
+import com.auth.framework.core.users.oauth2.OAuth2UserService;
 import com.auth.framework.core.utils.ValidationCenter;
 import lombok.extern.slf4j.Slf4j;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -46,6 +47,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 
 import java.nio.charset.StandardCharsets;
 
@@ -230,12 +232,12 @@ public class AuthenticationFrameworkConfiguration {
 
 
     //oauth2
-//    @Bean
-//    @ConditionalOnMissingBean(OAuth2UserService.class)
-//    public DefaultOAuth2UserService oAuth2UserService() {
-//        log.warn("OAuth2Service");
-//        return new OAuth2UserService();
-//    }
+    @Bean
+    @ConditionalOnMissingBean(DefaultOAuth2UserService.class)
+    public DefaultOAuth2UserService oAuth2UserService() {
+        log.warn("OAuth2Service");
+        return new OAuth2UserService();
+    }
 
 
     //action executor

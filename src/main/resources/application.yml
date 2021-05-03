@@ -1,4 +1,6 @@
 spring:
+#  mvc:
+#    log-request-details: true
   security:
     oauth2:
       client:
@@ -16,9 +18,9 @@ spring:
             #            http://localhost:8080/oauth2/authorization/github
             client-id: 4054bd91ce9111dfad78
             client-sercret: 52c49b3ec01f10e0818a7e75c9d3103a7e9cfe91
-
-logging:
-  level:
-    org:
-      springframework:
-        web: TRACE
+#
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        web: TRACE

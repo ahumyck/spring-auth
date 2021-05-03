@@ -7,7 +7,11 @@ import com.diplom.impl.repository.UserRepository;
 import com.diplom.impl.requestBody.RegistrationDataRequestBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.diplom.impl.ImplApplication.ADMIN_ROLE_NAME;
 import static com.diplom.impl.ImplApplication.USER_ROLE_NAME;
@@ -30,20 +34,47 @@ public class UserService {
     }
 
     public User createUser(String email, String username, String password) {
-        return createUserCommon(email, username, password, roleService.findRole(USER_ROLE_NAME), true);
+        return createUserCommon(email, username, password, true, roleService.findRole(USER_ROLE_NAME));
     }
 
     public User createUnlockedAdmin(String email, String username, String password) {
-        return createUserCommon(email, username, password, roleService.findRole(ADMIN_ROLE_NAME), false);
+        return createUserCommon(email, username, password, false, roleService.findRole(ADMIN_ROLE_NAME));
     }
 
     public User createUnlockedUser(String email, String username, String password) {
-        return createUserCommon(email, username, password, roleService.findRole(USER_ROLE_NAME), false);
+        return createUserCommon(email, username, password, false, roleService.findRole(USER_ROLE_NAME));
     }
 
-    private User createUserCommon(String email, String username, String password, Role role, boolean isLocked) {
+    public User createUserCommon(String email, String username, String password, boolean isLocked, Role... roles) {
+        Set<Role> filteredRoles = filterAuthorities(roles);
         isUserExists(email, username);
-        return userRepository.save(new User(email, username, password, role, isLocked));
+        return userRepository.save(new User(email, username, password, isLocked, filteredRoles));
+    }
+
+    public User createUserCommon(String email,
+                                 String username,
+                                 String password,
+                                 boolean isLocked,
+                                 Collection<? extends GrantedAuthority> authorities) {
+        Set<Role> filteredRoles = filterAuthorities(authorities);
+        isUserExists(email, username);
+        return userRepository.save(new User(email, username, password, isLocked, filteredRoles));
+    }
+
+    private Set<Role> filterAuthorities(Role[] roles) {
+        return Arrays.stream(roles)
+                .filter(role -> !role.getRoleName().startsWith("SCOPE_"))
+                .collect(Collectors.toSet());
+    }
+
+    private Set<Role> filterAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        return authorities
+                .stream()
+                .filter(authority -> !authority.getAuthority().startsWith("SCOPE_"))
+                .map(authority -> roleService.findRole(authority.getAuthority()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
     }
 
     private void isUserExists(String email, String username) throws UserCreationException {

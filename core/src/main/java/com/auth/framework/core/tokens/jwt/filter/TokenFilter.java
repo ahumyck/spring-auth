@@ -37,7 +37,8 @@ public class TokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
-            log.info("filtering");
+            log.info("request details => {}", request.getRequestURL());
+            log.info("request details => {}", request.getRequestURI());
             Optional<JsonWebToken> optionalToken = manager.validateAndGetToken(request);
             if (optionalToken.isPresent()) {
                 JsonWebToken jsonWebToken = optionalToken.get();
@@ -53,16 +54,33 @@ public class TokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 log.info("put actual information");
             } else {
-                UserPrincipal anonymousUserPrincipal = new AnonymousUserPrincipal();
-                PrincipalAuthenticationToken authenticationToken = new PrincipalAuthenticationToken(anonymousUserPrincipal);
-                log.info("put fake information");
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+//                log.info("no json web token");
+//                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//                if (authentication instanceof PrincipalAuthenticationToken) {
+//                    log.info("authentication instanceof PrincipalAuthenticationToken, {}", authentication);
+//                    try {
+//                        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+//                    } catch (ClassCastException | NullPointerException e) {
+//                        log.info("ClassCastException | NullPointerException e");
+//                        putAnonymousUserPrincipal();
+//                    }
+//                } else {
+//                    putAnonymousUserPrincipal();
+//                }
+                putAnonymousUserPrincipal();
             }
         } catch (Exception e) {
             log.error("Error validating token: ", e);
-            SecurityContextHolder.clearContext();
+            putAnonymousUserPrincipal();
         }
         filterChain.doFilter(request, response);
+    }
+
+    private void putAnonymousUserPrincipal() {
+        UserPrincipal anonymousUserPrincipal = new AnonymousUserPrincipal();
+        PrincipalAuthenticationToken authenticationToken = new PrincipalAuthenticationToken(anonymousUserPrincipal);
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        log.info("put fake information");
     }
 
 

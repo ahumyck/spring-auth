@@ -1,6 +1,5 @@
 package com.diplom.impl;
 
-import com.diplom.impl.service.AttributeService;
 import com.diplom.impl.service.RoleService;
 import com.diplom.impl.service.UserService;
 import lombok.SneakyThrows;
@@ -24,13 +23,6 @@ public class ImplApplication {
     public static final String ADMIN_ROLE_NAME = "ADMIN";
 
     @Autowired
-    private AttributeService attributeService;
-
-    public static final String PROJECT1_ATTRIBUTE_NAME = "project_1";
-    public static final String PROJECT2_ATTRIBUTE_NAME = "project_2";
-
-
-    @Autowired
     private UserService userService;
 
     @SneakyThrows
@@ -43,10 +35,6 @@ public class ImplApplication {
     public void init() {
         roleService.createRole(USER_ROLE_NAME);
         roleService.createRole(ADMIN_ROLE_NAME);
-
-        attributeService.createAttribute(PROJECT1_ATTRIBUTE_NAME);
-        attributeService.createAttribute(PROJECT2_ATTRIBUTE_NAME);
-
 
         userService.createUnlockedUser("user@email.com", "user", "user");
         userService.createUnlockedAdmin("admin@admin.com", "admin", "admin");

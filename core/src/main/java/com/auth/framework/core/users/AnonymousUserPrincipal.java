@@ -1,5 +1,6 @@
 package com.auth.framework.core.users;
 
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -7,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+@ToString
 public class AnonymousUserPrincipal implements UserPrincipal {
 
     private static final long serialVersionUID = 8984689467996223031L;
