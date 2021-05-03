@@ -47,6 +47,7 @@ public class AttributeHandlerInterceptor implements HandlerInterceptor {
         } catch (ClassCastException | NullPointerException e) {
             log.error("Unexpected exception occurred", e);
             response.sendError(401, "User has no attributes to get access for " + request.getRequestURI());
+            return false;
         }
         return true;
     }
