@@ -28,24 +28,22 @@ public class AttributeHandlerInterceptor implements HandlerInterceptor {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             log.info("authentication => {}", authentication);
             UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+            log.info("principal => {}", principal);
             for (Map.Entry<AntPathRequestMatcher, Predicates<UserPrincipal>> predicatesByMatcher : configurer.getPredicatesByMatchers().entrySet()) {
                 AntPathRequestMatcher antPathRequestMatcher = predicatesByMatcher.getKey();
                 if (antPathRequestMatcher.matches(request)) {
                     Predicates<UserPrincipal> predicates = predicatesByMatcher.getValue();
                     boolean applyResult = predicates.apply(principal);
                     if (!applyResult) {
-                        String errorMsg = "User" + principal.getUsername() +
-                                "has no attributes to get access for " + request.getRequestURI();
-                        log.warn(errorMsg);
-                        response.sendError(403, errorMsg);
+                        log.warn("User with name {} has no attributes to get access for {}", principal.getUsername(), request.getRequestURI());
                     }
                     return applyResult;
                 }
             }
         } catch (ClassCastException | NullPointerException e) {
             log.error("Unexpected exception occurred", e);
+            return false;
         }
-        log.info("returning true");
         return true;
     }
 }
