@@ -18,7 +18,7 @@ public class RedisPasswordTokenRepository implements PasswordTokenRepository {
     }
 
     @Override
-    public List<RedisPasswordToken> findAll() {
+    public List<PasswordToken> findAll() {
         return hashOperations
                 .values(KEY)
                 .stream()
@@ -28,8 +28,8 @@ public class RedisPasswordTokenRepository implements PasswordTokenRepository {
     }
 
     @Override
-    public void save(RedisPasswordToken token) {
-        hashOperations.put(KEY, token.getOwner(), token);
+    public void save(PasswordToken passwordToken) {
+        hashOperations.put(KEY, passwordToken.getOwner(), passwordToken);
     }
 
     @Override

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 @Slf4j
 public class CustomUserPrincipalService implements UserPrincipalService {
@@ -24,5 +26,10 @@ public class CustomUserPrincipalService implements UserPrincipalService {
         }
         log.error("{} was not found", username);
         throw new UsernameNotFoundException(username);
+    }
+
+    @Override
+    public void saveUser(Map<String, Object> params) {
+
     }
 }

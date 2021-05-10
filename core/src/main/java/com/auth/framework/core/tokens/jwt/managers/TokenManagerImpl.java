@@ -1,6 +1,8 @@
 package com.auth.framework.core.tokens.jwt.managers;
 
 import com.auth.framework.core.encryption.EncryptionService;
+import com.auth.framework.core.exceptions.EncryptionException;
+import com.auth.framework.core.exceptions.ResolveOwnerException;
 import com.auth.framework.core.exceptions.TokenGenerationException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.identity.IdentityProvider;
@@ -65,7 +67,7 @@ public class TokenManagerImpl implements TokenManager {
         if (input == null) return null;
         try {
             return encryptionService.decrypt(input);
-        } catch (Exception e) {
+        } catch (EncryptionException e) {
             log.error("Unable to decrypt token {} from request", input, e);
         }
         return null;
@@ -75,7 +77,7 @@ public class TokenManagerImpl implements TokenManager {
         if (input == null) return null;
         try {
             return identityProvider.resolveOwner(input);
-        } catch (Exception e) {
+        } catch (ResolveOwnerException e) {
             log.error("Unable to resolve owner for token {} from request", input, e);
         }
         return null;

@@ -1,8 +1,9 @@
 package com.auth.framework.registration.configuration.spring.factories;
 
 import com.auth.framework.registration.token.password.PasswordToken;
+import com.auth.framework.registration.token.password.generator.BasePasswordTokenGenerator;
 import com.auth.framework.registration.token.password.generator.PasswordTokenGenerator;
-import com.auth.framework.registration.token.password.generator.PasswordTokenGeneratorImpl;
+import com.auth.framework.registration.token.password.generator.RedisPasswordTokenGenerator;
 import com.auth.framework.registration.token.password.manager.PasswordTokenManager;
 import com.auth.framework.registration.token.password.manager.PasswordTokenManagerImpl;
 import com.auth.framework.registration.token.password.repository.PasswordTokenRepository;
@@ -35,7 +36,9 @@ public class RegistrationExtensionFrameworkRegistration {
     @Bean
     @ConditionalOnMissingBean(PasswordTokenGenerator.class)
     public PasswordTokenGenerator passwordTokenGenerator() {
-        return new PasswordTokenGeneratorImpl();
+        return new RedisPasswordTokenGenerator(
+                new BasePasswordTokenGenerator()
+        );
     }
 
 

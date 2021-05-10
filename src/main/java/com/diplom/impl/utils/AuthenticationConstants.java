@@ -1,4 +1,4 @@
-package com.auth.framework.core.constants;
+package com.diplom.impl.utils;
 
 public interface AuthenticationConstants {
 

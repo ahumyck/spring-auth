@@ -56,7 +56,7 @@ public interface TokenRepository {
     JsonWebToken findByUsernameAndRawToken(String owner, String rawToken);
 
 
-    void deleteByUsernameAndSession(String username, Map<String, Object> parameters);
+    void deleteByOwnerAndParameters(String username, Map<String, Object> parameters);
 
     /**
      * @param owner токен пользователя, который необходимо удалить

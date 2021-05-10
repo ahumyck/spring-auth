@@ -33,6 +33,7 @@ import com.auth.framework.core.tokens.jwt.managers.TokenManager;
 import com.auth.framework.core.tokens.jwt.managers.TokenManagerImpl;
 import com.auth.framework.core.tokens.jwt.managers.session.SessionManager;
 import com.auth.framework.core.tokens.jwt.managers.session.SessionManagerImpl;
+import com.auth.framework.core.tokens.jwt.repository.CacheGarbageCollector;
 import com.auth.framework.core.tokens.jwt.repository.InMemoryTokenRepository;
 import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
 import com.auth.framework.core.tokens.jwt.transport.CookieTransport;
@@ -50,6 +51,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
 @EnableConfigurationProperties({
@@ -196,8 +198,12 @@ public class AuthenticationFrameworkConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(TokenRepository.class)
-    public TokenRepository storage() {
-        return new InMemoryTokenRepository();
+    public TokenRepository storage(IdentityProviderProperties properties) {
+        Integer timeToLive = ValidationCenter.validatedNumberOrDefault(properties.getTimeToLive(), 300);
+        InMemoryTokenRepository inMemoryTokenRepository = new InMemoryTokenRepository();
+        Runnable garbageCollector = new CacheGarbageCollector(inMemoryTokenRepository, timeToLive);
+        garbageCollector.run();
+        return inMemoryTokenRepository;
     }
 
 

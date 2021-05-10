@@ -11,7 +11,10 @@ public class AdminUserValidatorDefault implements AdminUserValidator {
     private final List<String> adminNames;
 
     public AdminUserValidatorDefault() {
-        this.adminNames = Arrays.asList("administrator", "admin");
+        this.adminNames = Arrays.asList("administrator",
+                "admin",
+                "role_admin",
+                "role_administrator");
     }
 
     @Override

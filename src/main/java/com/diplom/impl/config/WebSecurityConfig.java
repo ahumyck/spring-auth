@@ -68,11 +68,9 @@ public class WebSecurityConfig extends WebSecurityConfigurableAdapter {
     @Override
     protected void configure(AttributeConfigurer configurer) {
         configurer
-                .predicatesMatchAny("/attributes/any",
-                        user -> user.getUsername().equals("user"),
-                        user -> user.getPassword().equals("fake"))
-                .predicatesMatchAll("/attributes/all",
-                        user -> user.getUsername().equals("user"),
-                        user -> user.getPassword().equals("fake"));
+                .predicatesMatchAll("/project/wf",
+                        user -> user.getParameter("project").equals("wf"))
+                .predicatesMatchAll("/project/po",
+                        user -> user.getParameter("project").equals("po"));
     }
 }

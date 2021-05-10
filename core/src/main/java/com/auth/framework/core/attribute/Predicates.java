@@ -7,7 +7,8 @@ public class Predicates<T> {
 
     private final Map<PredicateType, List<Predicate<T>>> predicatesByType = new HashMap<>();
 
-    public void add(PredicateType type, Predicate<T>... predicatesArgs) {
+    @SafeVarargs
+    public final void add(PredicateType type, Predicate<T>... predicatesArgs) {
         List<Predicate<T>> predicates = predicatesByType.computeIfAbsent(type, k -> new ArrayList<>(predicatesArgs.length));
         predicates.addAll(Arrays.asList(predicatesArgs));
         predicatesByType.put(type, predicates);
@@ -19,7 +20,7 @@ public class Predicates<T> {
      * @param object объект на котором проверяются предикаты
      * @return результат применения предикатов
      */
-    public boolean apply(T object) {
+    public boolean test(T object) {
         List<Predicate<T>> predicatesApplyAll = predicatesByType.get(PredicateType.ALL);
         if (predicatesApplyAll != null && !predicatesApplyAll.isEmpty()) {
             for (Predicate<T> predicate : predicatesApplyAll)

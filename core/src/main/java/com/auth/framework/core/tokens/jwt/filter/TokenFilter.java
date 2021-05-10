@@ -45,28 +45,10 @@ public class TokenFilter extends OncePerRequestFilter {
                 String owner = jsonWebToken.getOwner();
                 UserPrincipal userPrincipal = principalService.loadUserByUsername(owner);
 
-                jsonWebToken
-                        .getTokenParameters()
-                        .forEach(userPrincipal::putParameter);
-
-
                 PrincipalAuthenticationToken authenticationToken = new PrincipalAuthenticationToken(userPrincipal);
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 log.info("put actual information");
             } else {
-//                log.info("no json web token");
-//                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//                if (authentication instanceof PrincipalAuthenticationToken) {
-//                    log.info("authentication instanceof PrincipalAuthenticationToken, {}", authentication);
-//                    try {
-//                        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
-//                    } catch (ClassCastException | NullPointerException e) {
-//                        log.info("ClassCastException | NullPointerException e");
-//                        putAnonymousUserPrincipal();
-//                    }
-//                } else {
-//                    putAnonymousUserPrincipal();
-//                }
                 putAnonymousUserPrincipal();
             }
         } catch (Exception e) {
@@ -80,7 +62,7 @@ public class TokenFilter extends OncePerRequestFilter {
         UserPrincipal anonymousUserPrincipal = new AnonymousUserPrincipal();
         PrincipalAuthenticationToken authenticationToken = new PrincipalAuthenticationToken(anonymousUserPrincipal);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        log.info("put fake information");
+        log.info("putAnonymousUserPrincipal information");
     }
 
 

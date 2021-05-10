@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
-//todo: self-cleaning cache
 public class InMemoryTokenRepository implements TokenRepository {
 
     private final Map<String, List<JsonWebToken>> storage = new ConcurrentHashMap<>();
@@ -99,7 +98,7 @@ public class InMemoryTokenRepository implements TokenRepository {
     }
 
     @Override
-    public void deleteByUsernameAndSession(String username, Map<String, Object> parameters) {
+    public void deleteByOwnerAndParameters(String username, Map<String, Object> parameters) {
         log.info("Invalidation json web token by owner {}", username);
 
         List<JsonWebToken> tokens = storage.get(username);

@@ -1,12 +1,12 @@
 package com.diplom.impl.controller;
 
-import com.auth.framework.core.constants.AuthenticationConstants;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
-import com.auth.framework.registration.token.password.RedisPasswordToken;
+import com.auth.framework.registration.token.password.PasswordToken;
 import com.auth.framework.registration.token.password.repository.PasswordTokenRepository;
 import com.diplom.impl.repository.RoleRepository;
 import com.diplom.impl.repository.UserRepository;
+import com.diplom.impl.utils.AuthenticationConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,7 +43,7 @@ public class DBController {
         log.info("password tokens {}",
                 passwordTokenRepository.findAll()
                         .stream()
-                        .map(RedisPasswordToken::getOwner)
+                        .map(PasswordToken::getOwner)
                         .collect(Collectors.toList()));
     }
 

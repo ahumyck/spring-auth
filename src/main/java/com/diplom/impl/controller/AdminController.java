@@ -2,7 +2,7 @@ package com.diplom.impl.controller;
 
 import com.auth.framework.core.action.Action;
 import com.auth.framework.core.action.executor.ActionExecutor;
-import com.auth.framework.core.constants.AuthenticationConstants;
+import com.diplom.impl.utils.AuthenticationConstants;
 import com.auth.framework.core.exceptions.ActionExecutionException;
 import com.auth.framework.core.exceptions.KillSessionException;
 import com.auth.framework.core.exceptions.TokenGenerationException;

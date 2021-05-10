@@ -34,11 +34,11 @@ public class AttributeHandlerInterceptor implements HandlerInterceptor {
                 AntPathRequestMatcher antPathRequestMatcher = predicatesByMatcher.getKey();
                 if (antPathRequestMatcher.matches(request)) {
                     Predicates<UserPrincipal> predicates = predicatesByMatcher.getValue();
-                    boolean applyResult = predicates.apply(principal);
+                    boolean applyResult = predicates.test(principal);
                     if (!applyResult) {
-                        String errorMsg = "User " + principal.getUsername() +
-                                " has no attributes to get access for " + request.getRequestURI();
-                        log.warn(errorMsg);
+                        log.warn("User '{}' has no attributes to get access for '{}'",
+                                principal.getUsername(),
+                                request.getRequestURI());
                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     }
                     return applyResult;

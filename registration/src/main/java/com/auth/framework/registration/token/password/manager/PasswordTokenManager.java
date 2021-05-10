@@ -1,10 +1,10 @@
 package com.auth.framework.registration.token.password.manager;
 
-import com.auth.framework.registration.token.password.RedisPasswordToken;
+import com.auth.framework.registration.token.password.PasswordToken;
 
 public interface PasswordTokenManager {
 
-    RedisPasswordToken createPasswordTokenForUsername(String username);
+    PasswordToken createPasswordTokenForUsername(String username);
 
     boolean isTokenValid(String username, String token);
 

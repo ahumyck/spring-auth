@@ -44,7 +44,7 @@ public class SessionManagerImpl implements SessionManager {
                     log.warn("Can't kill session that is currently using");
                     throw new KillSessionException("Can't kill active session " + session);
                 }
-                tokenRepository.deleteByUsernameAndSession(username, session.getParameters());
+                tokenRepository.deleteByOwnerAndParameters(username, session.getParameters());
             } else {
                 log.warn("request had no token");
             }

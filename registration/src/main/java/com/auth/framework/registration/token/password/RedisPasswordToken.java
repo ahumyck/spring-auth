@@ -1,29 +1,21 @@
 package com.auth.framework.registration.token.password;
 
-import com.auth.framework.registration.utils.DateUtils;
-import lombok.Getter;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
-@RedisHash(value = "PasswordToken")
-public class RedisPasswordToken implements PasswordToken {
+@RedisHash(value = "RedisPasswordToken")
+public class RedisPasswordToken extends BasePasswordToken {
 
-    private static final long serialVersionUID = 1639228654224430235L;
-    private final String owner;
-    private final String token;
-    private final Date expireDate;
-
-    @TimeToLive
-    private final Integer duration;
+    private static final long serialVersionUID = -501704820083737714L;
 
     public RedisPasswordToken(String owner, String token, Integer duration) {
-        this.owner = owner;
-        this.token = token;
-        this.duration = duration;
-        this.expireDate = DateUtils.createDateFromNow(duration, TimeUnit.MINUTES);
+        super(owner, token, duration);
+    }
+
+    public RedisPasswordToken(BasePasswordToken basePasswordToken) {
+        super(basePasswordToken.owner, basePasswordToken.token, basePasswordToken.duration);
     }
 
 
@@ -38,6 +30,7 @@ public class RedisPasswordToken implements PasswordToken {
     }
 
     @Override
+    @TimeToLive
     public Integer getDuration() {
         return duration;
     }
