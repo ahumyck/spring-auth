@@ -1,4 +1,4 @@
-package com.auth.framework.core.users.oauth2;
+package com.auth.framework.oauth.oauth2;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

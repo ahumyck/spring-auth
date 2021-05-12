@@ -1,8 +1,8 @@
 package com.auth.framework.core.access.admin;
 
-import org.springframework.security.core.userdetails.UserDetails;
+import com.auth.framework.core.users.UserPrincipal;
 
 public interface AdminUserValidator {
 
-    boolean isAdmin(UserDetails userDetails);
+    boolean isAdmin(UserPrincipal userDetails);
 }

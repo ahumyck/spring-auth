@@ -1,5 +1,6 @@
 package com.auth.framework.core.access.admin;
 
+import com.auth.framework.core.users.UserPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,7 +13,7 @@ public class AdminValidatorWithInjectedAdminUserRoleName implements AdminUserVal
     }
 
     @Override
-    public boolean isAdmin(UserDetails userDetails) {
+    public boolean isAdmin(UserPrincipal userDetails) {
         if (userDetails == null)
             return false;
         if (userDetails.getAuthorities() == null || userDetails.getAuthorities().isEmpty())

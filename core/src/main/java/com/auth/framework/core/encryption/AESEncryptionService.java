@@ -2,19 +2,23 @@ package com.auth.framework.core.encryption;
 
 import com.auth.framework.core.exceptions.EncryptionException;
 
-import javax.crypto.*;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
 public class AESEncryptionService implements EncryptionService {
+
     private final byte[] password;
 
     // AES-GCM parameters
     private static final int AES_KEY_SIZE = 128; //bits
     private static final int GCM_NONCE_LENGTH = 12; // bytes
     private static final int GCM_TAG_LENGTH = 16; // bytes
+
 
     public AESEncryptionService(byte[] password) {
         this.password = password;
@@ -72,6 +76,7 @@ public class AESEncryptionService implements EncryptionService {
 
             cipher.init(Cipher.DECRYPT_MODE, secretKey, spec);
             cipher.updateAAD(generateAAD(random));
+            Base64.getDecoder().decode(input.getBytes());
             return new String(cipher.doFinal(Base64.getDecoder().decode(input.getBytes())));
         } catch (Exception e) {
             throw new EncryptionException(e);

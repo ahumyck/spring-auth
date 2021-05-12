@@ -35,21 +35,21 @@ public class SessionManagerImpl implements SessionManager {
             if (possibleJWT.isPresent()) {
                 JsonWebToken jsonWebToken = possibleJWT.get();
 
-                log.info(
+                log.debug(
                         "trying to kill session with params: username - {}, session parameters - {}",
                         username, jsonWebToken.getTokenParameters()
                 );
 
                 if (Objects.equals(session.getParameters(), jsonWebToken.getTokenParameters())) {
-                    log.warn("Can't kill session that is currently using");
+                    log.debug("Can't kill session that is currently using");
                     throw new KillSessionException("Can't kill active session " + session);
                 }
                 tokenRepository.deleteByOwnerAndParameters(username, session.getParameters());
             } else {
-                log.warn("request had no token");
+                log.debug("request had no token");
             }
         } else {
-            log.warn("Principal username {} and session username {} do not match", username, sessionOwner);
+            log.debug("Principal username {} and session username {} do not match", username, sessionOwner);
         }
 
     }

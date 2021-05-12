@@ -1,4 +1,4 @@
-package com.auth.framework.core.users.oauth2;
+package com.auth.framework.oauth.oauth2;
 
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;

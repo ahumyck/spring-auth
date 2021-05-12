@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import javax.annotation.PostConstruct;
 
 @Slf4j
-//todo: remove @Slf4j for all classes in core/registration framework
 public abstract class WebSecurityConfigurableAdapter extends WebSecurityConfigurerAdapter {
 
     private AttributeConfigurer attributeConfigurer;

@@ -16,5 +16,5 @@ public interface UserPrincipalService extends UserDetailsService {
     @Override
     UserPrincipal loadUserByUsername(String s) throws UsernameNotFoundException;
 
-    void saveUser(Map<String, Object> params);
+    void saveUser(UserPrincipal principal);
 }

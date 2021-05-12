@@ -29,7 +29,7 @@ public class CustomUserPrincipalService implements UserPrincipalService {
     }
 
     @Override
-    public void saveUser(Map<String, Object> params) {
+    public void saveUser(UserPrincipal principal) {
 
     }
 }

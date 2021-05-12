@@ -37,8 +37,8 @@ public class TokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
-            log.info("request details => {}", request.getRequestURL());
-            log.info("request details => {}", request.getRequestURI());
+            log.debug("request details => {}", request.getRequestURL());
+            log.debug("request details => {}", request.getRequestURI());
             Optional<JsonWebToken> optionalToken = manager.validateAndGetToken(request);
             if (optionalToken.isPresent()) {
                 JsonWebToken jsonWebToken = optionalToken.get();
@@ -47,7 +47,7 @@ public class TokenFilter extends OncePerRequestFilter {
 
                 PrincipalAuthenticationToken authenticationToken = new PrincipalAuthenticationToken(userPrincipal);
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                log.info("put actual information");
+                log.debug("put actual information");
             } else {
                 putAnonymousUserPrincipal();
             }
@@ -62,7 +62,7 @@ public class TokenFilter extends OncePerRequestFilter {
         UserPrincipal anonymousUserPrincipal = new AnonymousUserPrincipal();
         PrincipalAuthenticationToken authenticationToken = new PrincipalAuthenticationToken(anonymousUserPrincipal);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        log.info("putAnonymousUserPrincipal information");
+        log.debug("putAnonymousUserPrincipal information");
     }
 
 

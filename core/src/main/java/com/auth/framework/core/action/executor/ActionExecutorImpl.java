@@ -27,7 +27,7 @@ public class ActionExecutorImpl implements ActionExecutor {
         throw new UserHasNoAccessException(principal);
     }
 
-    private List<GrantedAuthority> getAllUserAuthorities(UserPrincipal principal) {
+    private List<GrantedAuthority> getAuthorities(UserPrincipal principal) {
         Collection<? extends GrantedAuthority> authorities = principal.getAuthorities();
         List<GrantedAuthority> allAuthorities;
         if (authorities != null) {
@@ -42,7 +42,7 @@ public class ActionExecutorImpl implements ActionExecutor {
     private <T> boolean haveAccessForAction(UserPrincipal principal, Action<T> action) {
         if (!validator.isAdmin(principal)) {
             String authority = action.getAuthority().getAuthority();
-            return getAllUserAuthorities(principal)
+            return getAuthorities(principal)
                     .stream()
                     .map(GrantedAuthority::getAuthority)
                     .anyMatch(authorityName -> authorityName.equals(authority));

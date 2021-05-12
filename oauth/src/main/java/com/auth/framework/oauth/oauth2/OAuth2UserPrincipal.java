@@ -1,4 +1,4 @@
-package com.auth.framework.core.users.oauth2;
+package com.auth.framework.oauth.oauth2;
 
 import org.springframework.security.oauth2.core.user.OAuth2User;
 

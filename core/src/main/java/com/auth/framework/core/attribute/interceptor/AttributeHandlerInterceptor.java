@@ -27,16 +27,15 @@ public class AttributeHandlerInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            log.info("authentication => {}", authentication);
-            UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
-            log.info("principal => {}", principal);
+            log.debug("authentication => {}", authentication);
             for (Map.Entry<AntPathRequestMatcher, Predicates<UserPrincipal>> predicatesByMatcher : configurer.getPredicatesByMatchers().entrySet()) {
                 AntPathRequestMatcher antPathRequestMatcher = predicatesByMatcher.getKey();
                 if (antPathRequestMatcher.matches(request)) {
+                    UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
                     Predicates<UserPrincipal> predicates = predicatesByMatcher.getValue();
                     boolean applyResult = predicates.test(principal);
                     if (!applyResult) {
-                        log.warn("User '{}' has no attributes to get access for '{}'",
+                        log.debug("User '{}' has no attributes to get access for '{}'",
                                 principal.getUsername(),
                                 request.getRequestURI());
                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -46,7 +45,8 @@ public class AttributeHandlerInterceptor implements HandlerInterceptor {
             }
         } catch (ClassCastException | NullPointerException e) {
             log.error("Unexpected exception occurred", e);
-            response.sendError(401, "User has no attributes to get access for " + request.getRequestURI());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "User has no attributes to get access for " + request.getRequestURI());
             return false;
         }
         return true;

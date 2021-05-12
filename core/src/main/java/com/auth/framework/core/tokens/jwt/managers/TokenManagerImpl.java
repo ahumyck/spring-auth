@@ -39,12 +39,13 @@ public class TokenManagerImpl implements TokenManager {
                                        String username,
                                        Map<String, Object> parameters) throws TokenGenerationException {
         JsonWebToken jsonWebToken = tokenRepository.findTokenByParameters(username, parameters);
-        if (jsonWebToken == null) {
-            log.info("Creating token with params: username = {}, params = {}",
+        if (jsonWebToken != null) {
+            log.debug("Token with params exists: username = {}, params = {}",
                     username, parameters);
-            jsonWebToken = identityProvider.generateTokenForUser(username, parameters);
-            tokenRepository.save(jsonWebToken);
+            tokenRepository.deleteToken(jsonWebToken);
         }
+        jsonWebToken = identityProvider.generateTokenForUser(username, parameters);
+        tokenRepository.save(jsonWebToken);
         transport.addToken(response, jsonWebToken);
     }
 

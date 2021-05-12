@@ -3,7 +3,7 @@ package com.auth.framework.core.attribute;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class Predicates<T> {
+public class Predicates<T> implements Predicate<T> {
 
     private final Map<PredicateType, List<Predicate<T>>> predicatesByType = new HashMap<>();
 

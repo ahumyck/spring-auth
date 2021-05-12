@@ -24,3 +24,10 @@ spring:
 #    org:
 #      springframework:
 #        web: TRACE
+
+
+
+
+
+identity-properties:
+  asymmetric: true
