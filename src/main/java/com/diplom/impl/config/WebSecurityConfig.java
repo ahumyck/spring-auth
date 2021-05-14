@@ -23,10 +23,6 @@ import static com.diplom.impl.ImplApplication.ADMIN_ROLE_NAME;
 @Slf4j
 public class WebSecurityConfig extends WebSecurityConfigurableAdapter {
 
-    public WebSecurityConfig() {
-        log.info("WebSecurityConfig => default constructor is called");
-    }
-
     @Autowired
     private TokenFilter tokenFilter;
 

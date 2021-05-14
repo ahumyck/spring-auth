@@ -8,11 +8,6 @@ public class ValidationCenter {
         return StringUtils.isNotEmpty(string) && StringUtils.isNotBlank(string);
     }
 
-    public static boolean isValidPort(Integer port) {
-        if (port == null) return false;
-        return port > 0 && port < Math.pow(2, 16);
-    }
-
     public static boolean isPositiveValidNumber(Integer number) {
         if (number == null) return false;
         return number > 0;

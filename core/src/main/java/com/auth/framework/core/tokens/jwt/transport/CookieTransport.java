@@ -1,6 +1,7 @@
 package com.auth.framework.core.tokens.jwt.transport;
 
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
+import com.auth.framework.core.utils.ValidationCenter;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -9,14 +10,18 @@ import java.util.Optional;
 
 public class CookieTransport implements TokenTransport {
 
-    private final static String PRINCIPAL_COOKIE = "principal_cookie";
+    private final String fieldName;
+
+    public CookieTransport(String fieldName) {
+        this.fieldName = fieldName;
+    }
 
     private Cookie createCookie(JsonWebToken jsonWebToken) {
         return createCookie(jsonWebToken.getRawToken(), jsonWebToken.getTimeToLive());
     }
 
     private Cookie createCookie(String token, int duration) {
-        Cookie cookie = new Cookie(PRINCIPAL_COOKIE, token);
+        Cookie cookie = new Cookie(fieldName, token);
         cookie.setMaxAge(duration);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
@@ -33,9 +38,9 @@ public class CookieTransport implements TokenTransport {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (PRINCIPAL_COOKIE.equals(cookie.getName())) {
+                if (fieldName.equals(cookie.getName())) {
                     String token = cookie.getValue();
-                    if (token != null) return Optional.of(token);
+                    if (ValidationCenter.isValidString(token)) return Optional.of(token);
                 }
             }
         }

@@ -65,13 +65,15 @@ public class OAuth2OnSuccessHandler implements OAuth2SuccessHandler {
                 log.info("User with params: name - {}, email - {} already exists", name, email);
             }
 
+
+            manager.createTokenForUsername(response, name,
+                    Collections.singletonMap(AuthenticationConstants.USER_AGENT_HEADER_NAME,
+                            request.getHeader(AuthenticationConstants.USER_AGENT_HEADER_NAME)));
+
             UserPrincipal userPrincipal = userPrincipalService.loadUserByUsername(name);
             PrincipalAuthenticationToken authenticationToken = new PrincipalAuthenticationToken(userPrincipal);
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-            manager.createTokenForUsername(response, userPrincipal.getUsername(),
-                    Collections.singletonMap(AuthenticationConstants.USER_AGENT_HEADER_NAME,
-                            request.getHeader(AuthenticationConstants.USER_AGENT_HEADER_NAME)));
 
             log.info("userPrincipal {} is set to security context", userPrincipal);
 

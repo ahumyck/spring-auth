@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@ToString
 public class CustomUserPrincipal implements UserPrincipal {
 
     private static final long serialVersionUID = 2791908996117135518L;
@@ -86,5 +85,12 @@ public class CustomUserPrincipal implements UserPrincipal {
     @Override
     public void removeParameter(String key) {
         parameters.remove(key);
+    }
+
+    @Override
+    public String toString() {
+        return "CustomUserPrincipal{" +
+                "user=" + user.getUsername() +
+                '}';
     }
 }

@@ -28,6 +28,9 @@ public class UserService {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private PasswordEncoder encoder;
+
     public User createUser(RegistrationDataRequestBody body) {
         String email = body.getEmail();
         String username = body.getUsername();
@@ -50,7 +53,7 @@ public class UserService {
     public User createUserCommon(String email, String username, String password, boolean isLocked, Role... roles) {
         Set<Role> filteredRoles = filterAuthorities(roles);
         isUserExists(email, username);
-        return userRepository.save(new User(email, username, password, isLocked, filteredRoles));
+        return userRepository.save(new User(email, username, encoder.encode(password), isLocked, filteredRoles));
     }
 
     public User createUserCommon(String email,
@@ -87,7 +90,7 @@ public class UserService {
     }
 
     public boolean checkPassword(User user, String password) {
-        return user.getPassword().equals(password);
+        return encoder.matches(password, user.getPassword());
     }
 
     public void checkAndUnlockAccount(String username, String password) throws Exception {

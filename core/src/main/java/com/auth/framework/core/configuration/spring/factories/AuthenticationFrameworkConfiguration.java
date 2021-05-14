@@ -1,11 +1,6 @@
 package com.auth.framework.core.configuration.spring.factories;
 
 
-import com.auth.framework.core.access.admin.AdminUserValidator;
-import com.auth.framework.core.access.admin.AdminUserValidatorDefault;
-import com.auth.framework.core.access.admin.AdminValidatorWithInjectedAdminUserRoleName;
-import com.auth.framework.core.action.executor.ActionExecutor;
-import com.auth.framework.core.action.executor.ActionExecutorImpl;
 import com.auth.framework.core.attribute.AttributeConfigurer;
 import com.auth.framework.core.encryption.AESEncryptionService;
 import com.auth.framework.core.encryption.EncryptionService;
@@ -31,13 +26,15 @@ import com.auth.framework.core.tokens.jwt.keys.provider.jwk.SymmetricJsonWebKeyP
 import com.auth.framework.core.tokens.jwt.keys.symmetric.hmac.HmacJsonWebKeyProvider;
 import com.auth.framework.core.tokens.jwt.managers.TokenManager;
 import com.auth.framework.core.tokens.jwt.managers.TokenManagerImpl;
-import com.auth.framework.core.tokens.jwt.managers.session.SessionManager;
-import com.auth.framework.core.tokens.jwt.managers.session.SessionManagerImpl;
+import com.auth.framework.core.sessions.SessionManager;
+import com.auth.framework.core.sessions.SessionManagerImpl;
 import com.auth.framework.core.tokens.jwt.repository.CacheGarbageCollector;
 import com.auth.framework.core.tokens.jwt.repository.InMemoryTokenRepository;
 import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
 import com.auth.framework.core.tokens.jwt.transport.CookieTransport;
+import com.auth.framework.core.tokens.jwt.transport.HttpHeaderTransport;
 import com.auth.framework.core.tokens.jwt.transport.TokenTransport;
+import com.auth.framework.core.tokens.jwt.transport.TokenTransportType;
 import com.auth.framework.core.users.UserPrincipalService;
 import com.auth.framework.core.utils.ValidationCenter;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +50,7 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 @EnableConfigurationProperties({
         AuthenticationFrameworkProperties.class,
-        RedisJwtTokenConfigurationProperties.class,
+        TokenTransportProperties.class,
         IdentityProviderProperties.class
 })
 @Slf4j
@@ -189,8 +186,15 @@ public class AuthenticationFrameworkConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(TokenTransport.class)
-    public TokenTransport transport() {
-        return new CookieTransport();
+    public TokenTransport transport(TokenTransportProperties properties) {
+        String fieldName = properties.getFieldName();
+        fieldName = ValidationCenter.isValidString(fieldName) ? fieldName : "principalData";
+        TokenTransportType type = properties.getType();
+
+        if (type == null || type.equals(TokenTransportType.COOKIE)) {
+            return new CookieTransport(fieldName);
+        }
+        return new HttpHeaderTransport(fieldName);
     }
 
     @Bean
@@ -224,39 +228,11 @@ public class AuthenticationFrameworkConfiguration {
     }
 
 
-    @Bean
-    @ConditionalOnMissingBean(AdminUserValidator.class)
-    public AdminUserValidator validator(AuthenticationFrameworkProperties properties) {
-        String adminRoleName = properties.getAdminRoleName();
-        if (adminRoleName == null || "".equals(adminRoleName)) {
-            return new AdminUserValidatorDefault();
-        }
-        return new AdminValidatorWithInjectedAdminUserRoleName(adminRoleName);
-    }
-
-
-    //oauth2
-//    @Bean
-//    @ConditionalOnMissingBean(DefaultOAuth2UserService.class)
-//    public DefaultOAuth2UserService oAuth2UserService() {
-//        log.debug("OAuth2Service");
-//        return new OAuth2UserService();
-//    }
-
-
-    //action executor
-    @Bean
-    @ConditionalOnMissingBean(ActionExecutor.class)
-    public ActionExecutor actionExecutor(AdminUserValidator validator) {
-        return new ActionExecutorImpl(validator);
-    }
-
-
     //Session manager
     @Bean
     @ConditionalOnMissingBean(SessionManager.class)
-    public SessionManager sessionManager(TokenRepository repository, TokenManager manager) {
-        return new SessionManagerImpl(repository, manager);
+    public SessionManager sessionManager(TokenRepository repository) {
+        return new SessionManagerImpl(repository);
     }
 
     //attributes

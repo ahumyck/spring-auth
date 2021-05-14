@@ -1,4 +1,4 @@
-package com.auth.framework.core.tokens.jwt.managers.session;
+package com.auth.framework.core.sessions;
 
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import lombok.AllArgsConstructor;
