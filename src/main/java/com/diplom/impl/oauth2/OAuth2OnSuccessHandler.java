@@ -59,6 +59,7 @@ public class OAuth2OnSuccessHandler implements OAuth2SuccessHandler {
             String email = oAuth2UserPrincipal.getEmail();
             String password = passwordGenerator.generatePasswordThenEncodeAsBase64();
             Collection<? extends GrantedAuthority> authorities = oAuth2UserPrincipal.getAuthorities();
+
             try {
                 userService.createUserCommon(email, name, password, false, authorities);
             } catch (UserCreationException e) {

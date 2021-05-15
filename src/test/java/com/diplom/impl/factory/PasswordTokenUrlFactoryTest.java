@@ -16,7 +16,6 @@ class PasswordTokenUrlFactoryTest {
 
         PasswordTokenUrlFactory urlFactory = new PasswordTokenUrlFactory(new PasswordTokenManager() {
 
-
             @Override
             public RedisPasswordToken createPasswordTokenForUsername(String username) {
                 return new RedisPasswordToken(username, token, 20);

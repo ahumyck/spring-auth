@@ -7,6 +7,7 @@ import com.auth.framework.core.users.PrincipalAuthenticationToken;
 import com.auth.framework.core.users.UserPrincipal;
 import com.auth.framework.core.users.UserPrincipalService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -37,17 +38,18 @@ public class TokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
-            log.debug("request details => {}", request.getRequestURL());
-            log.debug("request details => {}", request.getRequestURI());
+            log.info("request details => {}", request.getRequestURI());
             Optional<JsonWebToken> optionalToken = manager.validateAndGetToken(request);
             if (optionalToken.isPresent()) {
                 JsonWebToken jsonWebToken = optionalToken.get();
                 String owner = jsonWebToken.getOwner();
+
                 UserPrincipal userPrincipal = principalService.loadUserByUsername(owner);
+                userPrincipal.putAll(jsonWebToken.getTokenParameters());
 
                 PrincipalAuthenticationToken authenticationToken = new PrincipalAuthenticationToken(userPrincipal);
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                log.debug("put actual information");
+                log.info("putActualInformation {}", userPrincipal);
             } else {
                 putAnonymousUserPrincipal();
             }
@@ -59,10 +61,18 @@ public class TokenFilter extends OncePerRequestFilter {
     }
 
     private void putAnonymousUserPrincipal() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            log.info("principal => {}", authentication.getPrincipal());
+        } catch (ClassCastException exception) {
+            log.info("ClassCastException ops");
+        } catch (NullPointerException exception) {
+            log.info("NullPointerException ops");
+        }
         UserPrincipal anonymousUserPrincipal = new AnonymousUserPrincipal();
         PrincipalAuthenticationToken authenticationToken = new PrincipalAuthenticationToken(anonymousUserPrincipal);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        log.debug("putAnonymousUserPrincipal information");
+        log.info("putAnonymousUserPrincipal information");
     }
 
 

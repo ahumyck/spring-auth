@@ -81,6 +81,11 @@ public class UserPrincipalStub implements UserPrincipal {
     }
 
     @Override
+    public void putAll(Map<String, Object> parameters) {
+        this.parameters.putAll(parameters);
+    }
+
+    @Override
     public boolean containsParameter(String key) {
         return this.parameters.containsKey(key);
     }

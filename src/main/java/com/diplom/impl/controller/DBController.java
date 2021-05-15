@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
 public class DBController {
-
 
     @Autowired
     private UserRepository userRepository;

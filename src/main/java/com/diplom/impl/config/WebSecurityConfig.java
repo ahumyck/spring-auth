@@ -15,11 +15,16 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.time.LocalDate;
+
 import static com.diplom.impl.ImplApplication.ADMIN_ROLE_NAME;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
+@EnableGlobalMethodSecurity(
+        securedEnabled = true,
+        jsr250Enabled = true,
+        prePostEnabled = true)
 @Slf4j
 public class WebSecurityConfig extends WebSecurityConfigurableAdapter {
 
@@ -61,12 +66,15 @@ public class WebSecurityConfig extends WebSecurityConfigurableAdapter {
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
+
     @Override
     protected void configure(AttributeConfigurer configurer) {
         configurer
-                .predicatesMatchAll("/project/wf",
-                        user -> user.getParameter("project").equals("wf"))
-                .predicatesMatchAll("/project/po",
-                        user -> user.getParameter("project").equals("po"));
+                .predicatesMatchAll("/project/loginTime",
+                        user -> {
+                            LocalDate lastLogin = (LocalDate) user.getParameter("lastLogin");
+                            return lastLogin.isAfter(LocalDate.of(2020, 8, 15))
+                                    && lastLogin.isBefore(LocalDate.now());
+                        });
     }
 }

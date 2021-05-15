@@ -1,5 +1,6 @@
 package com.diplom.impl.controller;
 
+import com.auth.framework.core.exceptions.TokenGenerationException;
 import com.diplom.impl.utils.AuthenticationConstants;
 import com.auth.framework.core.tokens.jwt.managers.TokenManager;
 import com.diplom.impl.requestBody.RegistrationDataRequestBody;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
+
+import static com.diplom.impl.utils.AuthenticationConstants.USER_AGENT_HEADER_NAME;
 
 @RestController
 @Slf4j
@@ -47,12 +50,11 @@ public class LoginController {
         try {
             userService.isExistingAndNotLocked(username, password);
             manager.createTokenForUsername(response, username,
-                    Collections.singletonMap(AuthenticationConstants.USER_AGENT_HEADER_NAME,
-                            request.getHeader(AuthenticationConstants.USER_AGENT_HEADER_NAME)));
-        } catch (Exception e) {
-            log.warn("Unable to login", e);
-            return "Unable to login: " + e.getMessage();
+                    Collections.singletonMap(USER_AGENT_HEADER_NAME, request.getHeader(USER_AGENT_HEADER_NAME)));
+        } catch (TokenGenerationException e) {
+            log.warn("Не получилось создать токен для пользователя", e);
+            return "Не получилось создать токен для пользователя: " + e.getMessage();
         }
-        return "check cookie";
+        return "Проверьте токен";
     }
 }

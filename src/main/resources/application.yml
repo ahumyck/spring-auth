@@ -1,21 +1,15 @@
 spring:
-#  mvc:
-#    log-request-details: true
   security:
     oauth2:
       client:
         registration:
           google:
-            #            oauth2/authorization/google
-            #            http://localhost:8080/login/oauth2/code/google
-            #            http://localhost:8080/oauth2/authorization/google
             client-id: 442478117311-qul4hlh8u8osin4c21vlhk21tiut9n47.apps.googleusercontent.com
             client-secret: 5jE59a67ZT4OqprWDMVIVe15
             scope:
               - email
               - profile
           github:
-            #            http://localhost:8080/oauth2/authorization/github
             client-id: 4054bd91ce9111dfad78
             client-sercret: 52c49b3ec01f10e0818a7e75c9d3103a7e9cfe91
 
@@ -25,11 +19,17 @@ spring:
 #      springframework:
 #        web: TRACE
 
+# oauth2/authorization/google
+# http://localhost:8080/login/oauth2/code/google
+# http://localhost:8080/oauth2/authorization/google
+# http://localhost:8080/oauth2/authorization/github
+
+
 
 identity-properties:
   asymmetric: true
 
 
 transport-properties:
-  type: http_header
+  type: cookie
   field-name: Authorization

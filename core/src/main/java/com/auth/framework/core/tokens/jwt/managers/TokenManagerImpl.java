@@ -45,6 +45,7 @@ public class TokenManagerImpl implements TokenManager {
             tokenRepository.deleteToken(jsonWebToken);
         }
         jsonWebToken = identityProvider.generateTokenForUser(username, parameters);
+        log.info("Token {} was created for user {}", jsonWebToken, username);
         tokenRepository.save(jsonWebToken);
         transport.addToken(response, jsonWebToken);
     }

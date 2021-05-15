@@ -3,7 +3,6 @@ package com.diplom.impl.principal;
 import com.auth.framework.core.users.UserPrincipal;
 import com.diplom.impl.model.entity.Role;
 import com.diplom.impl.model.entity.User;
-import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -78,6 +77,11 @@ public class CustomUserPrincipal implements UserPrincipal {
     }
 
     @Override
+    public void putAll(Map<String, Object> parameters) {
+        this.parameters.putAll(parameters);
+    }
+
+    @Override
     public boolean containsParameter(String key) {
         return parameters.containsKey(key);
     }
@@ -91,6 +95,7 @@ public class CustomUserPrincipal implements UserPrincipal {
     public String toString() {
         return "CustomUserPrincipal{" +
                 "user=" + user.getUsername() +
+                ", parameters=" + parameters +
                 '}';
     }
 }

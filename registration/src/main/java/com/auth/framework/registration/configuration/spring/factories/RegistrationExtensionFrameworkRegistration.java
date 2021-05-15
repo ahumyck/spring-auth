@@ -47,6 +47,8 @@ public class RegistrationExtensionFrameworkRegistration {
     public PasswordTokenManager manager(PasswordTokenGenerator generator,
                                         PasswordTokenRepository repository,
                                         RedisPasswordTokenConfigurationProperties properties) {
-        return new PasswordTokenManagerImpl(generator, repository, properties.getTimeToLive());
+        Integer timeToLive = properties.getTimeToLive();
+        timeToLive = timeToLive == null ? 300 : timeToLive;
+        return new PasswordTokenManagerImpl(generator, repository, timeToLive);
     }
 }

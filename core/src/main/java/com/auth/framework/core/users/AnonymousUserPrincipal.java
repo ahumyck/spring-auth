@@ -31,6 +31,11 @@ public class AnonymousUserPrincipal implements UserPrincipal {
     }
 
     @Override
+    public void putAll(Map<String, Object> parameters) {
+
+    }
+
+    @Override
     public boolean containsParameter(String key) {
         return false;
     }

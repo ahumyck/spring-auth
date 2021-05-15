@@ -52,8 +52,10 @@ public class UserService {
 
     public User createUserCommon(String email, String username, String password, boolean isLocked, Role... roles) {
         Set<Role> filteredRoles = filterAuthorities(roles);
-        isUserExists(email, username);
-        return userRepository.save(new User(email, username, encoder.encode(password), isLocked, filteredRoles));
+        if (!isUserExists(email, username)) {
+            return userRepository.save(new User(email, username, encoder.encode(password), isLocked, filteredRoles));
+        }
+        return null;
     }
 
     public User createUserCommon(String email,
@@ -62,8 +64,10 @@ public class UserService {
                                  boolean isLocked,
                                  Collection<? extends GrantedAuthority> authorities) {
         Set<Role> filteredRoles = filterAuthorities(authorities);
-        isUserExists(email, username);
-        return userRepository.save(new User(email, username, password, isLocked, filteredRoles));
+        if (!isUserExists(email, username)) {
+            return userRepository.save(new User(email, username, password, isLocked, filteredRoles));
+        }
+        return null;
     }
 
     private Set<Role> filterAuthorities(Role[] roles) {
@@ -82,11 +86,8 @@ public class UserService {
 
     }
 
-    private void isUserExists(String email, String username) throws UserCreationException {
-        if (userRepository.findByEmail(email) != null)
-            throw new UserCreationException("Username with such email already exists");
-        if (userRepository.findByUsername(username) != null)
-            throw new UserCreationException("Username with such email already exists");
+    private boolean isUserExists(String email, String username) {
+        return userRepository.findByEmail(email) != null && userRepository.findByUsername(username) != null;
     }
 
     public boolean checkPassword(User user, String password) {
@@ -95,29 +96,27 @@ public class UserService {
 
     public void checkAndUnlockAccount(String username, String password) throws Exception {
         User user = userRepository.findByUsername(username);
-        log.info("user checkUser => {}", user);
         if (user != null) {
             if (checkPassword(user, password)) {
                 user.setLocked(false);
                 userRepository.save(user);
                 return;
             }
-            throw new Exception("Incorrect login or password");
+            throw new RuntimeException("Incorrect login or password");
         }
-        throw new Exception("No user found with name " + username);
+        throw new RuntimeException("No user found with name " + username);
     }
 
-    public void isExistingAndNotLocked(String username, String password) throws Exception {
+    public void isExistingAndNotLocked(String username, String password) {
         User user = userRepository.findByUsername(username);
-        log.info("user isExistingAndLocked => {}", user);
         if (user != null) {
             if (checkPassword(user, password)) {
                 if (!user.isLocked()) return;
-                throw new Exception("Account is locked");
+                throw new RuntimeException("Account is locked");
             }
-            throw new Exception("Incorrect login or password");
+            throw new RuntimeException("Incorrect login or password");
         }
-        throw new Exception("No user found with name " + username);
+        throw new RuntimeException("No user found with name " + username);
     }
 
 

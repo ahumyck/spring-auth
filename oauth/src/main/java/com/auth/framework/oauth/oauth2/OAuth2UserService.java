@@ -10,11 +10,8 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2UserPrincipal loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        log.info("loadOAuthUserPrincipal logic invoked");
         try {
-            DefaultOAuth2UserPrincipal principal = new DefaultOAuth2UserPrincipal(super.loadUser(userRequest));
-            log.info("loaded user principal => {}", principal);
-            return principal;
+            return new DefaultOAuth2UserPrincipal(super.loadUser(userRequest));
 
         } catch (OAuth2AuthenticationException e) {
             log.error("error loading oauth user principal", e);

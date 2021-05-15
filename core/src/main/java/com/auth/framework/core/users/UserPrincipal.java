@@ -12,6 +12,8 @@ public interface UserPrincipal extends UserDetails {
 
     Object getParameter(String key);
 
+    void putAll(Map<String, Object> parameters);
+
     boolean containsParameter(String key);
 
     void removeParameter(String key);
