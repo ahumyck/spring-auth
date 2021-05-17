@@ -49,16 +49,17 @@ public class AttributeConfigurer {
 
     @SafeVarargs
     public final AttributeConfigurer predicatesMatchAny(String pattern, Predicate<UserPrincipal>... predicates) {
-        Predicates<UserPrincipal> userPrincipalPredicatesImpl = rules.computeIfAbsent(pattern, k -> factory.create());
-        userPrincipalPredicatesImpl.add(PredicateType.ANY, predicates);
-        rules.put(pattern, userPrincipalPredicatesImpl);
-        return this;
+        return predicatesMatch(PredicateType.ANY, pattern, predicates);
     }
 
     @SafeVarargs
     public final AttributeConfigurer predicatesMatchAll(String pattern, Predicate<UserPrincipal>... predicates) {
+        return predicatesMatch(PredicateType.ALL, pattern, predicates);
+    }
+
+    public final AttributeConfigurer predicatesMatch(PredicateType type, String pattern, Predicate<UserPrincipal>... predicates) {
         Predicates<UserPrincipal> userPrincipalPredicatesImpl = rules.computeIfAbsent(pattern, k -> factory.create());
-        userPrincipalPredicatesImpl.add(PredicateType.ALL, predicates);
+        userPrincipalPredicatesImpl.add(type, predicates);
         rules.put(pattern, userPrincipalPredicatesImpl);
         return this;
     }
