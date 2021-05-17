@@ -20,6 +20,7 @@ public class CustomUserPrincipal implements UserPrincipal {
 
     public CustomUserPrincipal(User user) {
         this.user = user;
+        this.parameters.put("date", this.user.getDate());
     }
 
     @Override

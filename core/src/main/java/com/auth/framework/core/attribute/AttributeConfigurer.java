@@ -1,12 +1,12 @@
 package com.auth.framework.core.attribute;
 
+import com.auth.framework.core.attribute.factory.PredicatesFactory;
 import com.auth.framework.core.users.UserPrincipal;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +30,12 @@ public class AttributeConfigurer {
             }
     );
 
+    private final PredicatesFactory<UserPrincipal> factory;
+
+    public AttributeConfigurer(PredicatesFactory<UserPrincipal> factory) {
+        this.factory = factory;
+    }
+
     public Map<AntPathRequestMatcher, Predicates<UserPrincipal>> getPredicatesByMatchers() {
         if (predicatesRules.size() == 0) {
             for (Map.Entry<String, Predicates<UserPrincipal>> entry : rules.entrySet()) {
@@ -43,17 +49,17 @@ public class AttributeConfigurer {
 
     @SafeVarargs
     public final AttributeConfigurer predicatesMatchAny(String pattern, Predicate<UserPrincipal>... predicates) {
-        Predicates<UserPrincipal> userPrincipalPredicates = rules.computeIfAbsent(pattern, k -> new Predicates<>());
-        userPrincipalPredicates.add(PredicateType.ANY, predicates);
-        rules.put(pattern, userPrincipalPredicates);
+        Predicates<UserPrincipal> userPrincipalPredicatesImpl = rules.computeIfAbsent(pattern, k -> factory.create());
+        userPrincipalPredicatesImpl.add(PredicateType.ANY, predicates);
+        rules.put(pattern, userPrincipalPredicatesImpl);
         return this;
     }
 
     @SafeVarargs
     public final AttributeConfigurer predicatesMatchAll(String pattern, Predicate<UserPrincipal>... predicates) {
-        Predicates<UserPrincipal> userPrincipalPredicates = rules.computeIfAbsent(pattern, k -> new Predicates<>());
-        userPrincipalPredicates.add(PredicateType.ALL, predicates);
-        rules.put(pattern, userPrincipalPredicates);
+        Predicates<UserPrincipal> userPrincipalPredicatesImpl = rules.computeIfAbsent(pattern, k -> factory.create());
+        userPrincipalPredicatesImpl.add(PredicateType.ALL, predicates);
+        rules.put(pattern, userPrincipalPredicatesImpl);
         return this;
     }
 }

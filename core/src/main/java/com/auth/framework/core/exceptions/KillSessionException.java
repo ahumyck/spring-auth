@@ -1,6 +1,6 @@
 package com.auth.framework.core.exceptions;
 
-public class KillSessionException extends AuthenticationAbstractException {
+public class KillSessionException extends AbstractException {
     private static final long serialVersionUID = 3671060548078078379L;
 
     public KillSessionException(String message) {

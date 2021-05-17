@@ -1,6 +1,6 @@
 package com.auth.framework.core.exceptions;
 
-public class ResolveOwnerException extends AuthenticationAbstractException{
+public class ResolveOwnerException extends AbstractException {
     private static final long serialVersionUID = 5894208332934430388L;
 
     public ResolveOwnerException(String message) {

@@ -66,15 +66,16 @@ public class WebSecurityConfig extends WebSecurityConfigurableAdapter {
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-
     @Override
     protected void configure(AttributeConfigurer configurer) {
         configurer
-                .predicatesMatchAll("/project/loginTime",
+                .predicatesMatchAll("/attribute/date",
                         user -> {
-                            LocalDate lastLogin = (LocalDate) user.getParameter("lastLogin");
-                            return lastLogin.isAfter(LocalDate.of(2020, 8, 15))
-                                    && lastLogin.isBefore(LocalDate.now());
+                            LocalDate date = (LocalDate) user.getParameter("date");
+                            LocalDate secondDate = LocalDate.now();
+                            LocalDate firstDate = LocalDate.of(2020, 8, 15);
+                            return (date.isAfter(firstDate) || date.isEqual(firstDate)) &&
+                                    (date.isBefore(secondDate) || date.isEqual(secondDate));
                         });
     }
 }

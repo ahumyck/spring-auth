@@ -1,6 +1,6 @@
 package com.auth.framework.core.exceptions;
 
-public class ProviderException extends AuthenticationAbstractException{
+public class ProviderException extends AbstractException {
     private static final long serialVersionUID = -7746353545427692866L;
 
     public ProviderException(String message) {

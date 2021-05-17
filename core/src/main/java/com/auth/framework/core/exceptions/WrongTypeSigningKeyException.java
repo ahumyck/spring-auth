@@ -1,6 +1,6 @@
 package com.auth.framework.core.exceptions;
 
-public class WrongTypeSigningKeyException extends AuthenticationAbstractException{
+public class WrongTypeSigningKeyException extends AbstractException {
     private static final long serialVersionUID = 6561444564604330717L;
 
     public WrongTypeSigningKeyException(String message) {

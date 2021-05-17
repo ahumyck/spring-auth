@@ -38,7 +38,7 @@ public class TokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
-            log.info("request details => {}", request.getRequestURI());
+            log.debug("request details => {}", request.getRequestURI());
             Optional<JsonWebToken> optionalToken = manager.validateAndGetToken(request);
             if (optionalToken.isPresent()) {
                 JsonWebToken jsonWebToken = optionalToken.get();
@@ -49,30 +49,22 @@ public class TokenFilter extends OncePerRequestFilter {
 
                 PrincipalAuthenticationToken authenticationToken = new PrincipalAuthenticationToken(userPrincipal);
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                log.info("putActualInformation {}", userPrincipal);
+                log.debug("putActualInformation {}", userPrincipal);
             } else {
                 putAnonymousUserPrincipal();
             }
         } catch (Exception e) {
-            log.error("Error validating token: ", e);
+            log.debug("Error validating token: ", e);
             putAnonymousUserPrincipal();
         }
         filterChain.doFilter(request, response);
     }
 
     private void putAnonymousUserPrincipal() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            log.info("principal => {}", authentication.getPrincipal());
-        } catch (ClassCastException exception) {
-            log.info("ClassCastException ops");
-        } catch (NullPointerException exception) {
-            log.info("NullPointerException ops");
-        }
         UserPrincipal anonymousUserPrincipal = new AnonymousUserPrincipal();
         PrincipalAuthenticationToken authenticationToken = new PrincipalAuthenticationToken(anonymousUserPrincipal);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        log.info("putAnonymousUserPrincipal information");
+        log.debug("putAnonymousUserPrincipal information");
     }
 
 

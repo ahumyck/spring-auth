@@ -1,5 +1,7 @@
 package com.diplom.impl;
 
+import com.diplom.impl.model.entity.User;
+import com.diplom.impl.repository.UserRepository;
 import com.diplom.impl.service.RoleService;
 import com.diplom.impl.service.UserService;
 import lombok.SneakyThrows;
@@ -8,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @SpringBootApplication
 @EnableJpaRepositories
@@ -26,6 +30,9 @@ public class ImplApplication {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @SneakyThrows
     public static void main(String[] args) {
         SpringApplication.run(ImplApplication.class, args);
@@ -39,6 +46,5 @@ public class ImplApplication {
 
         userService.createUnlockedUser("user@email.com", "user", "user");
         userService.createUnlockedAdmin("admin@admin.com", "admin", "admin");
-
     }
 }

@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class RedisPasswordTokenRepository implements PasswordTokenRepository {
 
     private final HashOperations<String, Object, Object> hashOperations;
-    private static final String KEY = "PASS_TOKEN";
+    private static final String KEY = "PASSWORD_RESET_TOKENS";
 
     public RedisPasswordTokenRepository(RedisTemplate<String, PasswordToken> redisTemplate) {
         this.hashOperations = redisTemplate.opsForHash();

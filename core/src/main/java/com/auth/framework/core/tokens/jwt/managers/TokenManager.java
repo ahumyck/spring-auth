@@ -3,6 +3,7 @@ package com.auth.framework.core.tokens.jwt.managers;
 
 import com.auth.framework.core.exceptions.TokenGenerationException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
+import jdk.nashorn.internal.parser.Token;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +33,9 @@ public interface TokenManager {
     void createTokenForUsername(HttpServletResponse response,
                                 String username,
                                 Map<String, Object> parameters) throws TokenGenerationException;
+
+
+    void createTokenForUsername(HttpServletResponse response, String username) throws TokenGenerationException;
 
 
     /**

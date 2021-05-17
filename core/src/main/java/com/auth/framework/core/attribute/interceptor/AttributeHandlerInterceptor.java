@@ -39,6 +39,7 @@ public class AttributeHandlerInterceptor implements HandlerInterceptor {
                                 principal.getUsername(),
                                 request.getRequestURI());
                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                        response.sendError(HttpStatus.UNAUTHORIZED.value(), "You have not attributes to get access for this page");
                     }
                     return applyResult;
                 }

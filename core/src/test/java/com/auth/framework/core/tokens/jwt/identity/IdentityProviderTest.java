@@ -5,6 +5,7 @@ import com.auth.framework.core.exceptions.ResolveOwnerException;
 import com.auth.framework.core.exceptions.TokenGenerationException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
+import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.random.RandomRsaJsonWebKeyProvider;
 import com.auth.framework.core.tokens.jwt.keys.provider.BaseKeyPairProvider;
 import com.auth.framework.core.tokens.jwt.keys.provider.PrivateKeyProvider;
 import com.auth.framework.core.tokens.jwt.keys.provider.PublicKeyProvider;
@@ -17,6 +18,7 @@ import lombok.SneakyThrows;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.lang.JoseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,7 +66,6 @@ class IdentityProviderTest {
 
             @Override
             public void addParameter(String parameterName, Object parameterValue) {
-
             }
 
             @Override
@@ -72,18 +73,14 @@ class IdentityProviderTest {
                 return parameters;
             }
         };
-
     }
 
-    @SneakyThrows
     @Test
+    @SneakyThrows
     public void test() {
-        JsonWebKey publicJsonWebKey = RsaJwkGenerator.generateJwk(2048);
+        JsonWebKey jsonWebKey = new RandomRsaJsonWebKeyProvider().provide();
 
-        publicJsonWebKey.setAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA256);
-        publicJsonWebKey.setKeyId("k1");
-
-        IdentityProvider identityProvider = new AsymmetricKeyIdentityProvider(publicJsonWebKey,
+        IdentityProvider identityProvider = new AsymmetricKeyIdentityProvider(jsonWebKey,
                 300,
                 2,
                 30,
@@ -94,7 +91,6 @@ class IdentityProviderTest {
 
         JsonWebToken jsonWebToken = identityProvider.generateTokenForUser(username, null);
         String owner = identityProvider.resolveOwner(jsonWebToken.getRawToken());
-
 
         Assertions.assertEquals(username, owner);
     }

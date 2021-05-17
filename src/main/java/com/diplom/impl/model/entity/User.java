@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +34,8 @@ public class User {
     @ToString.Exclude
     private Set<Role> roles = new HashSet<>();
 
+    private LocalDate date;
+
     private boolean isLocked;
 
     public User(String email, String username, String password, boolean isLocked, Role... roles) {
@@ -41,6 +44,7 @@ public class User {
         this.password = password;
         this.roles.addAll(Arrays.asList(roles));
         this.isLocked = isLocked;
+        this.date = LocalDate.now();
     }
 
     public User(String email, String username, String password, boolean isLocked, Set<Role> roles) {
@@ -49,5 +53,6 @@ public class User {
         this.password = password;
         if (roles != null) this.roles = roles;
         this.isLocked = isLocked;
+        this.date = LocalDate.now();
     }
 }

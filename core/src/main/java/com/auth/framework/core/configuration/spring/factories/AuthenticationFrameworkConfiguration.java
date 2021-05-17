@@ -2,6 +2,8 @@ package com.auth.framework.core.configuration.spring.factories;
 
 
 import com.auth.framework.core.attribute.AttributeConfigurer;
+import com.auth.framework.core.attribute.factory.PredicatesFactory;
+import com.auth.framework.core.attribute.factory.PredicatesFactoryImpl;
 import com.auth.framework.core.encryption.AESEncryptionService;
 import com.auth.framework.core.encryption.EncryptionService;
 import com.auth.framework.core.encryption.generator.RandomPasswordGenerator;
@@ -35,6 +37,7 @@ import com.auth.framework.core.tokens.jwt.transport.CookieTransport;
 import com.auth.framework.core.tokens.jwt.transport.HttpHeaderTransport;
 import com.auth.framework.core.tokens.jwt.transport.TokenTransport;
 import com.auth.framework.core.tokens.jwt.transport.TokenTransportType;
+import com.auth.framework.core.users.UserPrincipal;
 import com.auth.framework.core.users.UserPrincipalService;
 import com.auth.framework.core.utils.ValidationCenter;
 import lombok.extern.slf4j.Slf4j;
@@ -237,8 +240,14 @@ public class AuthenticationFrameworkConfiguration {
 
     //attributes
     @Bean
+    @ConditionalOnMissingBean
+    public PredicatesFactory<UserPrincipal> predicatesFactory() {
+        return new PredicatesFactoryImpl<>();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(AttributeConfigurer.class)
-    public AttributeConfigurer attributeConfigurer() {
-        return new AttributeConfigurer();
+    public AttributeConfigurer attributeConfigurer(PredicatesFactory<UserPrincipal> factory) {
+        return new AttributeConfigurer(factory);
     }
 }

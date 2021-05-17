@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -48,6 +49,11 @@ public class TokenManagerImpl implements TokenManager {
         log.info("Token {} was created for user {}", jsonWebToken, username);
         tokenRepository.save(jsonWebToken);
         transport.addToken(response, jsonWebToken);
+    }
+
+    @Override
+    public void createTokenForUsername(HttpServletResponse response, String username) throws TokenGenerationException {
+        createTokenForUsername(response, username, Collections.emptyMap());
     }
 
     @Override
