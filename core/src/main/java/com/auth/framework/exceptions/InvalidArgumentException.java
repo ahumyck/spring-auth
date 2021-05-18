@@ -1,4 +1,4 @@
-package com.auth.framework.core.exceptions;
+package com.auth.framework.exceptions;
 
 public class InvalidArgumentException extends AbstractException {
     private static final long serialVersionUID = -9195793088317035291L;

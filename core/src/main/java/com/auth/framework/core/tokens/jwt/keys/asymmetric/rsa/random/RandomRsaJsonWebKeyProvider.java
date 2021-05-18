@@ -1,6 +1,6 @@
 package com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.random;
 
-import com.auth.framework.core.exceptions.ProviderException;
+import com.auth.framework.exceptions.ProviderException;
 import com.auth.framework.core.tokens.jwt.keys.provider.jwk.AsymmetricJsonWebKeyProvider;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;

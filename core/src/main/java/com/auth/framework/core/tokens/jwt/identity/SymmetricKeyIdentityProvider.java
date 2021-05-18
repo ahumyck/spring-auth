@@ -1,6 +1,6 @@
 package com.auth.framework.core.tokens.jwt.identity;
 
-import com.auth.framework.core.exceptions.WrongTypeSigningKeyException;
+import com.auth.framework.exceptions.WrongTypeSigningKeyException;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;

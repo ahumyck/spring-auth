@@ -30,6 +30,10 @@ public class DefaultOAuth2UserPrincipal implements OAuth2UserPrincipal {
         return user.getAttribute("email");
     }
 
+    public <A> A getAttribute(String key) {
+        return user.getAttribute(key);
+    }
+
     @Override
     public String getName() {
         return user.getAttribute("name");

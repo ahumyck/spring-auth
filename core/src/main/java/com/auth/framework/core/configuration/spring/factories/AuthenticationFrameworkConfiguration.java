@@ -8,7 +8,7 @@ import com.auth.framework.core.encryption.AESEncryptionService;
 import com.auth.framework.core.encryption.EncryptionService;
 import com.auth.framework.core.encryption.generator.RandomPasswordGenerator;
 import com.auth.framework.core.encryption.generator.RandomPasswordGeneratorImpl;
-import com.auth.framework.core.exceptions.ProviderException;
+import com.auth.framework.exceptions.ProviderException;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactoryImpl;
 import com.auth.framework.core.tokens.jwt.filter.TokenFilter;

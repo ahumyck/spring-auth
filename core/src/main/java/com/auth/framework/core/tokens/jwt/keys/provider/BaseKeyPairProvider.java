@@ -1,6 +1,6 @@
 package com.auth.framework.core.tokens.jwt.keys.provider;
 
-import com.auth.framework.core.exceptions.ProviderException;
+import com.auth.framework.exceptions.ProviderException;
 
 import java.security.KeyPair;
 

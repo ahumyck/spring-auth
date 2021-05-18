@@ -12,7 +12,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2UserPrincipal loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         try {
             return new DefaultOAuth2UserPrincipal(super.loadUser(userRequest));
-
         } catch (OAuth2AuthenticationException e) {
             log.error("error loading oauth user principal", e);
             throw e;

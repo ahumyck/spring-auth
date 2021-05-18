@@ -1,9 +1,9 @@
 package com.auth.framework.core.tokens.jwt.managers;
 
 import com.auth.framework.core.encryption.EncryptionService;
-import com.auth.framework.core.exceptions.EncryptionException;
-import com.auth.framework.core.exceptions.ResolveOwnerException;
-import com.auth.framework.core.exceptions.TokenGenerationException;
+import com.auth.framework.exceptions.EncryptionException;
+import com.auth.framework.exceptions.ResolveOwnerException;
+import com.auth.framework.exceptions.TokenGenerationException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.identity.IdentityProvider;
 import com.auth.framework.core.tokens.jwt.repository.TokenRepository;

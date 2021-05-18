@@ -1,4 +1,4 @@
-package com.auth.framework.core.exceptions;
+package com.auth.framework.exceptions;
 
 public class EncryptionException extends AbstractException {
     private static final long serialVersionUID = -7333984499250470339L;

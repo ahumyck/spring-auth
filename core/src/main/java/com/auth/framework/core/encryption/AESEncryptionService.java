@@ -1,6 +1,6 @@
 package com.auth.framework.core.encryption;
 
-import com.auth.framework.core.exceptions.EncryptionException;
+import com.auth.framework.exceptions.EncryptionException;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;

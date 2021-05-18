@@ -1,6 +1,6 @@
 package com.diplom.impl.controller.test;
 
-import com.auth.framework.core.exceptions.TokenGenerationException;
+import com.auth.framework.exceptions.TokenGenerationException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.managers.TokenManager;
 import org.springframework.beans.factory.annotation.Autowired;

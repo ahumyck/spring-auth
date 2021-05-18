@@ -1,4 +1,4 @@
-package com.auth.framework.core.exceptions;
+package com.auth.framework.exceptions;
 
 public abstract class AbstractException extends RuntimeException {
     private static final long serialVersionUID = 1975169751649845488L;

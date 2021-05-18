@@ -1,4 +1,4 @@
-package com.auth.framework.oauth.oauth2;
+package com.auth.framework.exceptions;
 
 public class HandlerException extends Exception {
     private static final long serialVersionUID = -8659274380031977820L;

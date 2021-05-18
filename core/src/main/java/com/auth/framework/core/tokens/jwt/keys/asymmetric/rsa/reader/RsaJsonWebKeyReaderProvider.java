@@ -1,6 +1,6 @@
 package com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader;
 
-import com.auth.framework.core.exceptions.ProviderException;
+import com.auth.framework.exceptions.ProviderException;
 import com.auth.framework.core.tokens.jwt.keys.provider.KeyPairProvider;
 import com.auth.framework.core.tokens.jwt.keys.provider.jwk.AsymmetricJsonWebKeyProvider;
 import org.jose4j.jwk.JsonWebKey;

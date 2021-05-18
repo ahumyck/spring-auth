@@ -1,7 +1,7 @@
 package com.auth.framework.core.attribute;
 
 
-import com.auth.framework.core.exceptions.InvalidArgumentException;
+import com.auth.framework.exceptions.InvalidArgumentException;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;

@@ -1,7 +1,7 @@
 package com.auth.framework.core.encryption;
 
 
-import com.auth.framework.core.exceptions.EncryptionException;
+import com.auth.framework.exceptions.EncryptionException;
 
 /**
  * Сервис для аутентифицировающего шифрования/дешифрования данных, которые могут быть представлены в виде строки

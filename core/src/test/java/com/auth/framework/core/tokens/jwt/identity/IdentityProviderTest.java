@@ -1,8 +1,8 @@
 package com.auth.framework.core.tokens.jwt.identity;
 
-import com.auth.framework.core.exceptions.ProviderException;
-import com.auth.framework.core.exceptions.ResolveOwnerException;
-import com.auth.framework.core.exceptions.TokenGenerationException;
+import com.auth.framework.exceptions.ProviderException;
+import com.auth.framework.exceptions.ResolveOwnerException;
+import com.auth.framework.exceptions.TokenGenerationException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
 import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.random.RandomRsaJsonWebKeyProvider;
@@ -16,9 +16,7 @@ import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.RsaJsonWebK
 import com.auth.framework.core.utils.DateUtils;
 import lombok.SneakyThrows;
 import org.jose4j.jwk.JsonWebKey;
-import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.lang.JoseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

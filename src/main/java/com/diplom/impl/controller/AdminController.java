@@ -1,7 +1,7 @@
 package com.diplom.impl.controller;
 
-import com.auth.framework.core.exceptions.KillSessionException;
-import com.auth.framework.core.exceptions.TokenGenerationException;
+import com.auth.framework.exceptions.KillSessionException;
+import com.auth.framework.exceptions.TokenGenerationException;
 import com.auth.framework.core.sessions.Session;
 import com.auth.framework.core.sessions.SessionManager;
 import com.auth.framework.core.tokens.jwt.managers.TokenManager;

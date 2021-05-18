@@ -1,7 +1,7 @@
 package com.auth.framework.core.tokens.jwt.identity;
 
-import com.auth.framework.core.exceptions.ResolveOwnerException;
-import com.auth.framework.core.exceptions.TokenGenerationException;
+import com.auth.framework.exceptions.ResolveOwnerException;
+import com.auth.framework.exceptions.TokenGenerationException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 
 import java.util.Map;

@@ -1,7 +1,6 @@
 package com.diplom.impl.controller;
 
-import com.auth.framework.core.exceptions.TokenGenerationException;
-import com.diplom.impl.utils.AuthenticationConstants;
+import com.auth.framework.exceptions.TokenGenerationException;
 import com.auth.framework.core.tokens.jwt.managers.TokenManager;
 import com.diplom.impl.requestBody.RegistrationDataRequestBody;
 import com.diplom.impl.service.UserService;

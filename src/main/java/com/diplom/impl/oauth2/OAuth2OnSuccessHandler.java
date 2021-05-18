@@ -1,7 +1,7 @@
 package com.diplom.impl.oauth2;
 
 import com.auth.framework.core.encryption.generator.RandomPasswordGenerator;
-import com.auth.framework.core.exceptions.TokenGenerationException;
+import com.auth.framework.exceptions.TokenGenerationException;
 import com.auth.framework.core.tokens.jwt.managers.TokenManager;
 import com.auth.framework.core.users.AnonymousUserPrincipal;
 import com.auth.framework.core.users.PrincipalAuthenticationToken;

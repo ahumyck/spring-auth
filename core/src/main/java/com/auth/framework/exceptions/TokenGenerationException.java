@@ -1,4 +1,4 @@
-package com.auth.framework.core.exceptions;
+package com.auth.framework.exceptions;
 
 public class TokenGenerationException extends AbstractException {
     private static final long serialVersionUID = -7308003175397513484L;
