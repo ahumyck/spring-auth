@@ -27,6 +27,7 @@ public interface TokenManager {
      * </p>
      *
      * @param response ответ пользователю
+     * @param parameters дополнительный параметры токена
      * @param username для кого будет сгенерирован токен
      */
     void createTokenForUsername(HttpServletResponse response,
@@ -34,6 +35,21 @@ public interface TokenManager {
                                 Map<String, Object> parameters) throws TokenGenerationException;
 
 
+    /**
+     * В обязанности входит
+     * <p>
+     * 1) Создать токен
+     * </p>
+     * <p>
+     * 2) Записать его в хралище данных
+     * </p>
+     * <p>
+     * 3) Добавить его в ответ пользователю
+     * </p>
+     *
+     * @param response ответ пользователю
+     * @param username для кого будет сгенерирован токен
+     */
     void createTokenForUsername(HttpServletResponse response, String username) throws TokenGenerationException;
 
 

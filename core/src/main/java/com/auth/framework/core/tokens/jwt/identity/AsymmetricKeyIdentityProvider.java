@@ -9,6 +9,9 @@ import java.security.Key;
 
 public class AsymmetricKeyIdentityProvider extends BaseIdentityProvider {
 
+    private boolean isPrivateKeyCached = false;
+    private boolean isPublicKeyCached = false;
+
     public AsymmetricKeyIdentityProvider(JsonWebKey jsonWebKey,
                                          Integer durationTime,
                                          Integer activeBefore,
@@ -18,7 +21,7 @@ public class AsymmetricKeyIdentityProvider extends BaseIdentityProvider {
     }
 
     @Override
-    protected Key getPrivateKey(JsonWebKey jsonWebKey) throws WrongTypeSigningKeyException {
+    protected Key getRawPrivateKey(JsonWebKey jsonWebKey) throws WrongTypeSigningKeyException {
         if (jsonWebKey instanceof PublicJsonWebKey) {
             PublicJsonWebKey publicJsonWebKey = (PublicJsonWebKey) jsonWebKey;
             return publicJsonWebKey.getPrivateKey();
@@ -27,7 +30,7 @@ public class AsymmetricKeyIdentityProvider extends BaseIdentityProvider {
     }
 
     @Override
-    protected Key getPublicKey(JsonWebKey jsonWebKey) throws WrongTypeSigningKeyException {
+    protected Key getRawPublicKey(JsonWebKey jsonWebKey) throws WrongTypeSigningKeyException {
         if (jsonWebKey instanceof PublicJsonWebKey) {
             PublicJsonWebKey publicJsonWebKey = (PublicJsonWebKey) jsonWebKey;
             return publicJsonWebKey.getPublicKey();

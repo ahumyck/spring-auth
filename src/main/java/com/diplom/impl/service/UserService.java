@@ -133,6 +133,4 @@ public class UserService {
         }
         throw new RuntimeException("No user found with name " + username);
     }
-
-
 }

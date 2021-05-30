@@ -46,13 +46,11 @@
             <scope>test</scope>
         </dependency>
 
-
         <dependency>
             <groupId>com.auth.framework</groupId>
             <artifactId>core</artifactId>
             <version>1.0</version>
         </dependency>
-
 
         <dependency>
             <groupId>com.auth.framework</groupId>

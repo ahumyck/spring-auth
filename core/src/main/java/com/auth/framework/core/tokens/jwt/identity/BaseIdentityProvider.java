@@ -1,10 +1,10 @@
 package com.auth.framework.core.tokens.jwt.identity;
 
+import com.auth.framework.core.tokens.jwt.JsonWebToken;
+import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
 import com.auth.framework.exceptions.ResolveOwnerException;
 import com.auth.framework.exceptions.TokenGenerationException;
 import com.auth.framework.exceptions.WrongTypeSigningKeyException;
-import com.auth.framework.core.tokens.jwt.JsonWebToken;
-import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -27,6 +27,9 @@ public abstract class BaseIdentityProvider implements IdentityProvider {
     protected Integer activeBefore;
     protected Integer allowedClockSkewInSeconds;
     protected TokenFactory factory;
+
+    private Key cachedPublicKey = null;
+    private Key cachedPrivateKey = null;
 
     public BaseIdentityProvider(JsonWebKey jsonWebKey,
                                 Integer durationTime,
@@ -65,7 +68,7 @@ public abstract class BaseIdentityProvider implements IdentityProvider {
         try {
             JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                     .setRequireExpirationTime() // the JWT must have an expiration time
-                    .setVerificationKey(getPublicKey(jsonWebKey))
+                    .setVerificationKey(getPublicKey())
                     .setAllowedClockSkewInSeconds(allowedClockSkewInSeconds) // allow some leeway in validating time based claims to account for clock skew
                     .setRequireSubject() // the JWT must have a subject claim
                     .setJwsAlgorithmConstraints(PERMIT, allowedAlgorithm)
@@ -82,11 +85,27 @@ public abstract class BaseIdentityProvider implements IdentityProvider {
         jws.setPayload(claims.toJson());
         jws.setAlgorithmHeaderValue(jsonWebKey.getAlgorithm());
         jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
-        jws.setKey(getPrivateKey(jsonWebKey));
+        jws.setKey(getPrivateKey());
         return jws.getCompactSerialization();
     }
 
-    protected abstract Key getPrivateKey(JsonWebKey jsonWebKey) throws WrongTypeSigningKeyException;
+    protected Key getPrivateKey() {
+        if (cachedPrivateKey == null) {
+            cachedPrivateKey = getRawPrivateKey(jsonWebKey);
+        }
+        return cachedPrivateKey;
+    }
 
-    protected abstract Key getPublicKey(JsonWebKey jsonWebKey) throws WrongTypeSigningKeyException;
+    protected Key getPublicKey() {
+        if (cachedPublicKey == null) {
+            cachedPublicKey = getRawPublicKey(jsonWebKey);
+        }
+        return cachedPublicKey;
+    }
+
+    protected abstract Key getRawPrivateKey(JsonWebKey jsonWebKey) throws WrongTypeSigningKeyException;
+
+    protected abstract Key getRawPublicKey(JsonWebKey jsonWebKey) throws WrongTypeSigningKeyException;
+
+
 }

@@ -1,6 +1,5 @@
 package com.diplom.impl;
 
-import com.diplom.impl.model.entity.User;
 import com.diplom.impl.repository.UserRepository;
 import com.diplom.impl.service.RoleService;
 import com.diplom.impl.service.UserService;
@@ -12,9 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 @SpringBootApplication
 @EnableJpaRepositories

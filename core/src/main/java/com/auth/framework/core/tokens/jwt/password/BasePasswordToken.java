@@ -1,6 +1,7 @@
 package com.auth.framework.core.tokens.jwt.password;
 
-import com.auth.framework.two.utils.DateUtils;
+
+import com.auth.framework.core.utils.DateUtils;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;

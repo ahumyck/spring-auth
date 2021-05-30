@@ -13,7 +13,7 @@ public class SymmetricKeyIdentityProvider extends BaseIdentityProvider {
     }
 
     @Override
-    protected Key getPrivateKey(JsonWebKey jsonWebKey) throws WrongTypeSigningKeyException {
+    protected Key getRawPrivateKey(JsonWebKey jsonWebKey) throws WrongTypeSigningKeyException {
         if (jsonWebKey instanceof OctetSequenceJsonWebKey) {
             OctetSequenceJsonWebKey key = (OctetSequenceJsonWebKey) jsonWebKey;
             return key.getKey();
@@ -22,7 +22,7 @@ public class SymmetricKeyIdentityProvider extends BaseIdentityProvider {
     }
 
     @Override
-    protected Key getPublicKey(JsonWebKey jsonWebKey) throws WrongTypeSigningKeyException {
+    protected Key getRawPublicKey(JsonWebKey jsonWebKey) throws WrongTypeSigningKeyException {
         if (jsonWebKey instanceof OctetSequenceJsonWebKey) {
             OctetSequenceJsonWebKey key = (OctetSequenceJsonWebKey) jsonWebKey;
             return key.getKey();

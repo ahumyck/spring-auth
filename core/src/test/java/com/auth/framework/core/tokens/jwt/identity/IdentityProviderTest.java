@@ -1,19 +1,19 @@
 package com.auth.framework.core.tokens.jwt.identity;
 
-import com.auth.framework.exceptions.ProviderException;
-import com.auth.framework.exceptions.ResolveOwnerException;
-import com.auth.framework.exceptions.TokenGenerationException;
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
 import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.random.RandomRsaJsonWebKeyProvider;
+import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.PrivateRsaKeyReaderProvider;
+import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.PublicRsaKeyReaderProvider;
+import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.RsaJsonWebKeyReaderProvider;
 import com.auth.framework.core.tokens.jwt.keys.provider.BaseKeyPairProvider;
 import com.auth.framework.core.tokens.jwt.keys.provider.PrivateKeyProvider;
 import com.auth.framework.core.tokens.jwt.keys.provider.PublicKeyProvider;
 import com.auth.framework.core.tokens.jwt.keys.symmetric.hmac.HmacJsonWebKeyProvider;
-import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.PrivateRsaKeyReaderProvider;
-import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.PublicRsaKeyReaderProvider;
-import com.auth.framework.core.tokens.jwt.keys.asymmetric.rsa.reader.RsaJsonWebKeyReaderProvider;
 import com.auth.framework.core.utils.DateUtils;
+import com.auth.framework.exceptions.ProviderException;
+import com.auth.framework.exceptions.ResolveOwnerException;
+import com.auth.framework.exceptions.TokenGenerationException;
 import lombok.SneakyThrows;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -70,6 +70,11 @@ class IdentityProviderTest {
             public Map<String, Object> getTokenParameters() {
                 return parameters;
             }
+
+            @Override
+            public String toString() {
+                return "JWT = {" + rawToken + "}";
+            }
         };
     }
 
@@ -88,8 +93,10 @@ class IdentityProviderTest {
         String username = "username";
 
         JsonWebToken jsonWebToken = identityProvider.generateTokenForUser(username, null);
+        System.out.printf("Созданный токен %s \nдля пользователя '%s'\n",
+                jsonWebToken.toString(), username);
         String owner = identityProvider.resolveOwner(jsonWebToken.getRawToken());
-
+        System.out.printf("Имя владельца токена = %s, \nожидаемый владелец токена = %s\n", owner, username);
         Assertions.assertEquals(username, owner);
     }
 

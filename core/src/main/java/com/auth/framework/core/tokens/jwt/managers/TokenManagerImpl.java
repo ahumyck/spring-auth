@@ -39,6 +39,8 @@ public class TokenManagerImpl implements TokenManager {
     public void createTokenForUsername(HttpServletResponse response,
                                        String username,
                                        Map<String, Object> parameters) throws TokenGenerationException {
+        if (parameters == null) throw new NullPointerException("parameters are null, if you dont need them use " +
+                "other method without parameters");
         JsonWebToken jsonWebToken = tokenRepository.findTokenByParameters(username, parameters);
         if (jsonWebToken != null) {
             log.debug("Token with params exists: username = {}, params = {}",

@@ -8,8 +8,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoleService {
 
+    private final RoleRepository roleRepository;
+
     @Autowired
-    private RoleRepository roleRepository;
+    public RoleService(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
 
     public boolean createRole(String roleName) {
         if (findRole(roleName) == null) {
