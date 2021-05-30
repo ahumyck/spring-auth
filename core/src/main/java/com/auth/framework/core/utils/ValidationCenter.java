@@ -9,8 +9,7 @@ public class ValidationCenter {
     }
 
     public static boolean isPositiveValidNumber(Integer number) {
-        if (number == null) return false;
-        return number > 0;
+        return number != null && number > 0;
     }
 
     public static Integer validatedNumberOrDefault(Integer number, Integer defaultValue) {

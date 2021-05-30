@@ -1,0 +1,1 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.auth.framework.twofactor.configuration.spring.factories.TwoFactorAuthConfiguration

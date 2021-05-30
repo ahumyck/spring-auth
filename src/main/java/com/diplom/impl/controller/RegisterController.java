@@ -1,6 +1,6 @@
 package com.diplom.impl.controller;
 
-import com.auth.framework.registration.token.password.manager.PasswordTokenManager;
+import com.auth.framework.core.tokens.jwt.password.manager.PasswordTokenManager;
 import com.diplom.impl.exceptions.UserCreationException;
 import com.diplom.impl.factory.email.ContentGenerator;
 import com.diplom.impl.factory.email.EmailSender;

@@ -1,6 +1,6 @@
 package com.auth.framework.exceptions;
 
-public class HandlerException extends Exception {
+public class HandlerException extends RuntimeException {
     private static final long serialVersionUID = -8659274380031977820L;
 
     public HandlerException() {

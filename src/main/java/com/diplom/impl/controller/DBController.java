@@ -2,8 +2,8 @@ package com.diplom.impl.controller;
 
 import com.auth.framework.core.tokens.jwt.JsonWebToken;
 import com.auth.framework.core.tokens.jwt.repository.TokenRepository;
-import com.auth.framework.registration.token.password.PasswordToken;
-import com.auth.framework.registration.token.password.repository.PasswordTokenRepository;
+import com.auth.framework.core.tokens.jwt.password.PasswordToken;
+import com.auth.framework.core.tokens.jwt.password.repository.PasswordTokenRepository;
 import com.diplom.impl.repository.RoleRepository;
 import com.diplom.impl.repository.UserRepository;
 import com.diplom.impl.utils.AuthenticationConstants;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 @RestController

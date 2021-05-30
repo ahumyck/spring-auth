@@ -1,5 +1,7 @@
 package com.diplom.impl.service;
 
+import com.auth.framework.core.encryption.generator.RandomPasswordGenerator;
+import com.auth.framework.oauth.oauth2.DefaultOAuth2UserPrincipal;
 import com.diplom.impl.exceptions.UserCreationException;
 import com.diplom.impl.model.entity.Role;
 import com.diplom.impl.model.entity.User;
@@ -31,6 +33,10 @@ public class UserService {
     @Autowired
     private PasswordEncoder encoder;
 
+    @Autowired
+    private RandomPasswordGenerator passwordGenerator;
+
+
     public User createUser(RegistrationDataRequestBody body) {
         String email = body.getEmail();
         String username = body.getUsername();
@@ -48,6 +54,15 @@ public class UserService {
 
     public User createUnlockedUser(String email, String username, String password) {
         return createUserCommon(email, username, password, false, roleService.findRole(USER_ROLE_NAME));
+    }
+
+    public User createOAuth2User(DefaultOAuth2UserPrincipal principal) {
+        String name = principal.getName();
+        String email = principal.getEmail();
+        String password = passwordGenerator.generatePasswordThenEncodeAsBase64();
+        Collection<? extends GrantedAuthority> authorities = principal.getAuthorities();
+
+        return createUserCommon(email, name, password, false, authorities);
     }
 
     public User createUserCommon(String email, String username, String password, boolean isLocked, Role... roles) {

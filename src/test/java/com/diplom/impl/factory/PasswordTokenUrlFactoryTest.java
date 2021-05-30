@@ -1,7 +1,7 @@
 package com.diplom.impl.factory;
 
-import com.auth.framework.registration.token.password.RedisPasswordToken;
-import com.auth.framework.registration.token.password.manager.PasswordTokenManager;
+import com.auth.framework.core.tokens.jwt.password.RedisPasswordToken;
+import com.auth.framework.core.tokens.jwt.password.manager.PasswordTokenManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

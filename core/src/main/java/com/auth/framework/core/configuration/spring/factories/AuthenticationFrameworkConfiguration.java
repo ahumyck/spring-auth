@@ -8,6 +8,14 @@ import com.auth.framework.core.encryption.AESEncryptionService;
 import com.auth.framework.core.encryption.EncryptionService;
 import com.auth.framework.core.encryption.generator.RandomPasswordGenerator;
 import com.auth.framework.core.encryption.generator.RandomPasswordGeneratorImpl;
+import com.auth.framework.core.tokens.jwt.password.PasswordToken;
+import com.auth.framework.core.tokens.jwt.password.generator.BasePasswordTokenGenerator;
+import com.auth.framework.core.tokens.jwt.password.generator.PasswordTokenGenerator;
+import com.auth.framework.core.tokens.jwt.password.generator.RedisPasswordTokenGenerator;
+import com.auth.framework.core.tokens.jwt.password.manager.PasswordTokenManager;
+import com.auth.framework.core.tokens.jwt.password.manager.PasswordTokenManagerImpl;
+import com.auth.framework.core.tokens.jwt.password.repository.PasswordTokenRepository;
+import com.auth.framework.core.tokens.jwt.password.repository.RedisPasswordTokenRepository;
 import com.auth.framework.exceptions.ProviderException;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactory;
 import com.auth.framework.core.tokens.jwt.factory.TokenFactoryImpl;
@@ -47,6 +55,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.nio.charset.StandardCharsets;
 
@@ -54,10 +64,11 @@ import java.nio.charset.StandardCharsets;
 @EnableConfigurationProperties({
         AuthenticationFrameworkProperties.class,
         TokenTransportProperties.class,
-        IdentityProviderProperties.class
+        IdentityProviderProperties.class,
+        RedisPasswordTokenConfigurationProperties.class
 })
 @Slf4j
-public class AuthenticationFrameworkConfiguration {
+class AuthenticationFrameworkConfiguration {
 
     //random password generator
     @Bean
@@ -249,5 +260,41 @@ public class AuthenticationFrameworkConfiguration {
     @ConditionalOnMissingBean(AttributeConfigurer.class)
     public AttributeConfigurer attributeConfigurer(PredicatesFactory<UserPrincipal> factory) {
         return new AttributeConfigurer(factory);
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean(RedisTemplate.class)
+    public RedisTemplate<String, PasswordToken> redisTemplate(LettuceConnectionFactory lettuceConnectionFactory) {
+        RedisTemplate<String, PasswordToken> template = new RedisTemplate<>();
+        template.setConnectionFactory(lettuceConnectionFactory);
+        return template;
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean(PasswordTokenRepository.class)
+    public PasswordTokenRepository tokenRedisRepository(RedisTemplate<String, PasswordToken> redisTemplate) {
+        return new RedisPasswordTokenRepository(redisTemplate);
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean(PasswordTokenGenerator.class)
+    public PasswordTokenGenerator passwordTokenGenerator() {
+        return new RedisPasswordTokenGenerator(
+                new BasePasswordTokenGenerator()
+        );
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean(PasswordTokenManager.class)
+    public PasswordTokenManager manager(PasswordTokenGenerator generator,
+                                        PasswordTokenRepository repository,
+                                        RedisPasswordTokenConfigurationProperties properties) {
+        Integer timeToLive = properties.getTimeToLive();
+        timeToLive = timeToLive == null ? 300 : timeToLive;
+        return new PasswordTokenManagerImpl(generator, repository, timeToLive);
     }
 }

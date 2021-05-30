@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 
 
 @EnableConfigurationProperties
-public class OAuth2ExtensionConfiguration {
+class OAuth2ExtensionConfiguration {
 
     @Bean
     @ConditionalOnMissingBean

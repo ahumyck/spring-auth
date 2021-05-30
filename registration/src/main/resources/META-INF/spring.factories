@@ -1,1 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.auth.framework.registration.configuration.spring.factories.RegistrationExtensionFrameworkRegistration

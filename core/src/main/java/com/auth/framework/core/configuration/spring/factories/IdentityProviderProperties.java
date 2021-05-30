@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("identity-properties")
 @Data
-public class IdentityProviderProperties {
+class IdentityProviderProperties {
     private String encryptionPassword;
     private String jwtSignPassword;
     private boolean asymmetric;

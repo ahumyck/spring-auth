@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("transport-properties")
 @Data
-public class TokenTransportProperties {
+class TokenTransportProperties {
 
     private String fieldName;
     private TokenTransportType type;

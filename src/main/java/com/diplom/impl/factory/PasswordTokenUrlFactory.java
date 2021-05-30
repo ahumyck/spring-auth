@@ -1,8 +1,7 @@
 package com.diplom.impl.factory;
 
-import com.auth.framework.registration.token.password.PasswordToken;
-import com.auth.framework.registration.token.password.manager.PasswordTokenManager;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.auth.framework.core.tokens.jwt.password.PasswordToken;
+import com.auth.framework.core.tokens.jwt.password.manager.PasswordTokenManager;
 import org.springframework.stereotype.Component;
 
 @Component

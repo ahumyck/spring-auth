@@ -1,8 +1,8 @@
 package com.diplom.impl.controller.test;
 
 
-import com.auth.framework.registration.token.password.PasswordToken;
-import com.auth.framework.registration.token.password.manager.PasswordTokenManager;
+import com.auth.framework.core.tokens.jwt.password.PasswordToken;
+import com.auth.framework.core.tokens.jwt.password.manager.PasswordTokenManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
